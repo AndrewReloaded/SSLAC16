@@ -6,14 +6,14 @@ void _get(){
 
         if (server.argName(0)=="alarmN"){
           snprintf(stream,1024,"\
-[[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r\
-[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r\
-[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r\
-[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r[%d,%d]]\n\r",
-newAlarm[0].index,newAlarm[0].temp,newAlarm[1].index,newAlarm[1].temp,newAlarm[2].index,newAlarm[2].temp,newAlarm[3].index,newAlarm[3].temp,\
-newAlarm[4].index,newAlarm[4].temp,newAlarm[5].index,newAlarm[5].temp,newAlarm[6].index,newAlarm[6].temp,newAlarm[7].index,newAlarm[7].temp,\
-newAlarm[8].index,newAlarm[8].temp,newAlarm[9].index,newAlarm[9].temp,newAlarm[10].index,newAlarm[10].temp,newAlarm[11].index,newAlarm[11].temp,\
-newAlarm[12].index,newAlarm[12].temp,newAlarm[13].index,newAlarm[13].temp,newAlarm[14].index,newAlarm[14].temp,newAlarm[15].index,newAlarm[15].temp);          
+          [[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r\
+          [%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r\
+          [%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r\
+          [%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r[%d,%d]]\n\r",
+          newAlarm[0].index,newAlarm[0].temp,newAlarm[1].index,newAlarm[1].temp,newAlarm[2].index,newAlarm[2].temp,newAlarm[3].index,newAlarm[3].temp,\
+          newAlarm[4].index,newAlarm[4].temp,newAlarm[5].index,newAlarm[5].temp,newAlarm[6].index,newAlarm[6].temp,newAlarm[7].index,newAlarm[7].temp,\
+          newAlarm[8].index,newAlarm[8].temp,newAlarm[9].index,newAlarm[9].temp,newAlarm[10].index,newAlarm[10].temp,newAlarm[11].index,newAlarm[11].temp,\
+          newAlarm[12].index,newAlarm[12].temp,newAlarm[13].index,newAlarm[13].temp,newAlarm[14].index,newAlarm[14].temp,newAlarm[15].index,newAlarm[15].temp);          
           server.send(200,text_json,stream);
           return;
         }
@@ -48,30 +48,30 @@ newAlarm[12].index,newAlarm[12].temp,newAlarm[13].index,newAlarm[13].temp,newAla
             byte _ch=server.arg(0).toInt();
             //Serial.print("getting channel:");Serial.println(_ch);
             snprintf(stream,1024,"[\
-[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d],\n\r\
-[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d],\n\r\
-[%d,%d,%d],\n\r\
-[%d],\n\r\
-[%d],\n\r\
-[%d],\n\r\
-[\"%s\"]]\n\r",\
-newCh[_ch].value[0],newCh[_ch].value[1],newCh[_ch].value[2],newCh[_ch].value[3],\
-newCh[_ch].value[4],newCh[_ch].value[5],newCh[_ch].value[6],newCh[_ch].value[7],\
-newCh[_ch].value[8],newCh[_ch].value[9],newCh[_ch].value[10],newCh[_ch].value[11],\
-newCh[_ch].value[12],newCh[_ch].value[13],newCh[_ch].value[14],newCh[_ch].value[15],\
-(newCh[_ch].time[0].Hour*60+newCh[_ch].time[0].Minute),(newCh[_ch].time[1].Hour*60+newCh[_ch].time[1].Minute),\
-(newCh[_ch].time[2].Hour*60+newCh[_ch].time[2].Minute),(newCh[_ch].time[3].Hour*60+newCh[_ch].time[3].Minute),\
-(newCh[_ch].time[4].Hour*60+newCh[_ch].time[4].Minute),(newCh[_ch].time[5].Hour*60+newCh[_ch].time[5].Minute),\
-(newCh[_ch].time[6].Hour*60+newCh[_ch].time[6].Minute),(newCh[_ch].time[7].Hour*60+newCh[_ch].time[7].Minute),\
-(newCh[_ch].time[8].Hour*60+newCh[_ch].time[8].Minute),(newCh[_ch].time[9].Hour*60+newCh[_ch].time[9].Minute),\
-(newCh[_ch].time[10].Hour*60+newCh[_ch].time[10].Minute),(newCh[_ch].time[11].Hour*60+newCh[_ch].time[11].Minute),\
-(newCh[_ch].time[12].Hour*60+newCh[_ch].time[12].Minute),(newCh[_ch].time[13].Hour*60+newCh[_ch].time[13].Minute),\
-(newCh[_ch].time[14].Hour*60+newCh[_ch].time[14].Minute),(newCh[_ch].time[15].Hour*60+newCh[_ch].time[15].Minute),\
-newCh[_ch].color[0],newCh[_ch].color[1],newCh[_ch].color[2],\
-newCh[_ch].group,\
-newCh[_ch].type,\
-newCh[_ch].Inv,\
-newCh[_ch].name);
+            [%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d],\n\r\
+            [%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d],\n\r\
+            [%d,%d,%d],\n\r\
+            [%d],\n\r\
+            [%d],\n\r\
+            [%d],\n\r\
+            [\"%s\"]]\n\r",\
+            newCh[_ch].value[0],newCh[_ch].value[1],newCh[_ch].value[2],newCh[_ch].value[3],\
+            newCh[_ch].value[4],newCh[_ch].value[5],newCh[_ch].value[6],newCh[_ch].value[7],\
+            newCh[_ch].value[8],newCh[_ch].value[9],newCh[_ch].value[10],newCh[_ch].value[11],\
+            newCh[_ch].value[12],newCh[_ch].value[13],newCh[_ch].value[14],newCh[_ch].value[15],\
+            (newCh[_ch].time[0].Hour*60+newCh[_ch].time[0].Minute),(newCh[_ch].time[1].Hour*60+newCh[_ch].time[1].Minute),\
+            (newCh[_ch].time[2].Hour*60+newCh[_ch].time[2].Minute),(newCh[_ch].time[3].Hour*60+newCh[_ch].time[3].Minute),\
+            (newCh[_ch].time[4].Hour*60+newCh[_ch].time[4].Minute),(newCh[_ch].time[5].Hour*60+newCh[_ch].time[5].Minute),\
+            (newCh[_ch].time[6].Hour*60+newCh[_ch].time[6].Minute),(newCh[_ch].time[7].Hour*60+newCh[_ch].time[7].Minute),\
+            (newCh[_ch].time[8].Hour*60+newCh[_ch].time[8].Minute),(newCh[_ch].time[9].Hour*60+newCh[_ch].time[9].Minute),\
+            (newCh[_ch].time[10].Hour*60+newCh[_ch].time[10].Minute),(newCh[_ch].time[11].Hour*60+newCh[_ch].time[11].Minute),\
+            (newCh[_ch].time[12].Hour*60+newCh[_ch].time[12].Minute),(newCh[_ch].time[13].Hour*60+newCh[_ch].time[13].Minute),\
+            (newCh[_ch].time[14].Hour*60+newCh[_ch].time[14].Minute),(newCh[_ch].time[15].Hour*60+newCh[_ch].time[15].Minute),\
+            newCh[_ch].color[0],newCh[_ch].color[1],newCh[_ch].color[2],\
+            newCh[_ch].group,\
+            newCh[_ch].type,\
+            newCh[_ch].Inv,\
+            newCh[_ch].name);
              server.send(200,text_json,stream);
              return;
           }
@@ -151,10 +151,10 @@ newCh[_ch].name);
            }
            if (server.arg(0)="1"){
               snprintf(stream,1024,"[\
-[%d,%d,%d,%d],\n\r\
-[%d,%d,%d],\n\r\
-[\"%s\",\"%s\",\"%s\",\"%s\",%d,%d],\n\r\
-[%d]]\n\r",\
+              [%d,%d,%d,%d],\n\r\
+              [%d,%d,%d],\n\r\
+              [\"%s\",\"%s\",\"%s\",\"%s\",%d,%d],\n\r\
+              [%d]]\n\r",\
               tm.Hour,tm.Minute,tm.Second,Time_Zone,\
               pSDA,pSCL,pwmFreq,\
               esp_hostname.c_str(),WiFi.localIP().toString().c_str(),ssid.c_str(),WiFi.softAPIP().toString().c_str(),foundedNet,isConn,cSensor);   
