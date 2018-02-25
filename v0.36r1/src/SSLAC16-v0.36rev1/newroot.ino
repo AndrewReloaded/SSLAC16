@@ -44,7 +44,7 @@ void _get(){
             server.send(200,text_json,"[]");
             return;
             
-          }else {
+          }else{
             byte _ch=server.arg(0).toInt();
             //Serial.print("getting channel:");Serial.println(_ch);
             snprintf(stream,1024,"[\
@@ -72,8 +72,8 @@ void _get(){
             newCh[_ch].type,\
             newCh[_ch].Inv,\
             newCh[_ch].name);
-             server.send(200,text_json,stream);
-             return;
+            server.send(200,text_json,stream);
+            return;
           }
         }
 
@@ -123,10 +123,14 @@ void _get(){
                 isConn,WiFi.localIP().toString().c_str(),ssid.c_str(),isPCA,isRTC,\
                 is_time_set,esp_hostname.c_str(),isMaster,isSlave,ESP.getChipId(),sPacket.sender_id,WiFi.softAPIP().toString().c_str(),\
                 tm.Hour,tm.Minute,tm.Second,\
-                _millis/3600000/24,\ //Uptime days
-                _millis/3600000%24,\ //Uptime hours
-                _millis/60000%60,\   //Uptime minutes
-                _millis/1000%60,\    //Uptime seconds
+                //Uptime days
+                _millis/3600000/24,\
+                //Uptime hours
+                _millis/3600000%24,\
+                //Uptime minutes
+                _millis/60000%60,\
+                //Uptime seconds
+                _millis/1000%60,\
                 Time_Zone,\
                 "isAlarm","tAlarm.index","tAlarm.temp","tAlarm.step",\
                 isAlarm,tAlarm.index,tAlarm.temp,tAlarm.step,isHidePassword);
@@ -136,7 +140,8 @@ void _get(){
            if (server.arg(0)=="0"){
               snprintf(stream,1024,"[[%d,%d,%d],\n\r[%d,%d,%d,%d],\n\r[%d],\n\r[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]]\n\r",\
               tm.Hour,tm.Minute,tm.Second,\
-              _millis/3600000/24,\ //Uptime days
+              //Uptime days
+              _millis/3600000/24,\
               _millis/3600000%24,\
               //Uptime hours
               _millis/60000%60,\

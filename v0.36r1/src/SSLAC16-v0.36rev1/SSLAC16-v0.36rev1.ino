@@ -11,32 +11,22 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <FS.h>
+
 extern "C" {
 #include <sntp.h>
 }
 
+//TODO:
+//1. Remove death code
+//2. Fix text formatting
+// ...
+//N. Add hardware disabling of softAP
 
-
+#define TEMPERATURE_PRECISION 9
 #define USE_SERIAL Serial
-byte version[3]={0,36,1};
-byte Current_ch=0;
-unsigned long _millis=0;
-IPAddress broadcast;
 
-File fsUploadFile;
-const String text_html="text/html";
-const String text_plain="text/plain";
-const String text_json="text/json";
-const String htm=".htm";
-const String html=".html";
-//String html_h;
-//#include <string_MSG.h>
-//const char *sURL="https://yadi.sk/d/Lz94aYC5oSTBm";
-//const char *sURL="https://raw.githubusercontent.com/bbasil2012/SSLAC16/main/testbuild/SSLAC16-v0.35rev5.cpp.bin";
-byte playTime=255;
-int newCurrent[16];
-int emLight[16]={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-byte foundedNet;
+byte version[3]={0,36,1};
+
 typedef struct _adoptation
 {
   byte groupK[8];
@@ -45,17 +35,23 @@ typedef struct _adoptation
   
 };
 _adoptation adoptation;
+
 typedef struct _shed
-    {
-      byte Hour=256;
-      byte Minute=256;
-    };
-typedef struct _newAlarm{
+{
+  byte Hour=256;
+  byte Minute=256;
+};
+
+typedef struct _newAlarm
+{
   byte index=255;
   byte temp;
   byte step=10;
 };
-typedef struct _newCh {
+_newAlarm newAlarm[8];
+
+typedef struct _newCh
+{
   int value[16]={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
   _shed time[16];
   byte color[3];
@@ -63,17 +59,19 @@ typedef struct _newCh {
   byte type;
   byte Inv;
   char name[32];
-  
 };
-typedef struct _pump {
+_newCh newCh[16];
+
+typedef struct _pump
+{
   int value;
   byte index;
   byte gpio;
 };
-_newCh newCh[16];
-_newAlarm newAlarm[8];
 _pump Pumps[16];
-typedef struct _group{
+
+typedef struct _group
+{
   char name[32];
   byte alarmIndex=255;
   byte temp=50;
@@ -88,17 +86,9 @@ typedef struct _alarm_temperature
   byte temp=50;
   byte step=10;
 };
-typedef struct _balling_data
+
+typedef struct _sync_packet
 {
-  float _Ca; //концентрация Ca по тестам
-  float _Mg; //концентрация Mg по тестам
-  float _Kh; // dKh по тестам
-  int   days; // кол-во дней от предыдущего теста
-};
-
-
-
-typedef struct _sync_packet {
   byte id=0;
   uint32_t sender_id;
   unsigned long uptime;
@@ -121,13 +111,6 @@ typedef struct _sync_packet {
 };
 _sync_packet sPacket;
 
-typedef struct _udp_packet {
- byte id; 
-  uint32_t sender_id;
-  unsigned long uptime;
- byte buff[1024];
-};
-
 typedef struct _ch
 {
   int Max;
@@ -140,25 +123,36 @@ typedef struct _ch
   _shed Sunset;
   _shed Night;
   byte ds18x20_addr[8];
-  
 };
-
-
-
-
 _ch ch[16];
+
 typedef struct _ds18x20
-  {
-    DeviceAddress addr;
-    float Temp;
-    char Desc[16];
-    byte index;
-  };
+{
+  DeviceAddress addr;
+  float Temp;
+  char Desc[16];
+  byte index;
+};
+_ds18x20 Sensor[8];
+
+byte Current_ch=0;
+unsigned long _millis=0;
+IPAddress broadcast;
+
+File fsUploadFile;
+const String text_html="text/html";
+const String text_plain="text/plain";
+const String text_json="text/json";
+const String htm=".htm";
+const String html=".html";
+byte playTime=255;
+int newCurrent[16];
+int emLight[16]={-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+byte foundedNet;
 
 DeviceAddress addr;
 _alarm_temperature tAlarm;
 byte isAlarm[8]={0,0,0,0,0,0,0,0};
-
 
 bool isFirmware=false;
 bool isSPIFFS=false;
@@ -206,13 +200,10 @@ ESP8266WebServer server(80);
 Adafruit_PWMServoDriver pwm;
 OneWire oneWire(13);
 DallasTemperature sensors(&oneWire);
-_ds18x20 Sensor[8];
 byte buff[sizeof Sensor ];
 byte cSensor;
-#define TEMPERATURE_PRECISION 9
 
 WiFiClientSecure client;
-
 
  
 void setup(void){
@@ -351,7 +342,7 @@ void setup(void){
       
      
       if (isRTC!=0) {
-          if (isRTC==1) ds1307RTC.read(tm);
+          if (isRTC==1) RTC.read(tm);
           if (isRTC==2) readPCF8563(tm);  
           
         }// else Serial.println(F("Time may be wrong !!!"));

@@ -84,7 +84,7 @@ void ticker(){
     }
     
     if (_millis % 1000==0){
-        if (isRTC==1)  ds1307RTC.read(tm);
+        if (isRTC==1)  RTC.read(tm);
         if (isRTC==2)  readPCF8563(tm);
         if (isRTC==0){
           tm.Hour= (msCurrent/1000)  % 86400L / 3600;
@@ -157,7 +157,7 @@ void ticker(){
 
 
 void setTimeRTC(){
-     if (isRTC==1) ds1307RTC.write(tm);
+     if (isRTC==1) RTC.write(tm);
      if (isRTC==2) setPCF8563(tm);
      if (isRTC==3){
       setPCF8563(tm);
