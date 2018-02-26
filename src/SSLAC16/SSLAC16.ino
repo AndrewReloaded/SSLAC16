@@ -2,7 +2,6 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-#include <WiFiUdp.h>
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <EEPROM.h>
@@ -141,7 +140,7 @@ const char *ssid_ap = "";
 const char *passwd_ap = "";
 String esp_hostname = "";
 int pwmFreq = 1000;
-byte Time_Zone/* = 157*/;
+byte Time_Zone;
 byte is_time_set = 1;
 unsigned long msCurrent = 0;
 unsigned long msStart = 0;
@@ -155,10 +154,8 @@ byte EmLight = 0;
 byte isHidePassword = 0;
 tmElements_t tm;
 
-unsigned int localPort;
-WiFiUDP udp;
-
 ESP8266WebServer server(80);
+
 Adafruit_PWMServoDriver pwm;
 OneWire oneWire(13);
 DallasTemperature sensors(&oneWire);
@@ -167,16 +164,26 @@ byte cSensor;
 
 WiFiClientSecure client;
 
-
 void setup(void) {
   delay(5000);
   Serial.begin(115200);
+  Serial.println("");
+  Serial.println("Start setup");
   Serial.println(__DATE__);
   Serial.println(__TIME__);
+
+  Serial.println("Setup complete");
+}
+
+
+
+void setupAll(void) {
+
   configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
   SPIFFS.begin();
   delay(200);
   readall();
+  //вместо скрытия пароля сделать отключение точки доступа
   if (digitalRead(0) == 0) isHidePassword = 0;
   start_softAP();
   if (esp_hostname == "") esp_hostname = "SSLAC";
@@ -193,8 +200,6 @@ void setup(void) {
   pwm = Adafruit_PWMServoDriver();
   pwm.begin();
   pwm.setPWMFreq(pwmFreq);
-  localPort = random(1024, 65535);
-
 
   WiFi.mode(WIFI_AP_STA);
   sensors.begin();
@@ -232,7 +237,7 @@ void setup(void) {
     if (upload.status == UPLOAD_FILE_START) {
 
       Serial.setDebugOutput(true);
-      WiFiUDP::stopAll();
+
       if (upload.filename.endsWith(".spiffs.bin")) {
         isSPIFFS = true;
       }
@@ -303,7 +308,7 @@ void setup(void) {
   }
 
   if (isRTC != 0) {
-    if (isRTC == 1) RTC.read(tm);
+    if (isRTC == 1) ds1307RTC.read(tm);
     if (isRTC == 2) readPCF8563(tm);
 
   }// else Serial.println(F("Time may be wrong !!!"));
@@ -330,11 +335,7 @@ void setup(void) {
     }
   }
 
-  if (WiFi.localIP() != 0) isConn = true; else isConn = false;
-  if (isConn) {
-    if (ssid != WiFi.SSID()) ssid = WiFi.SSID();
-    udp.begin(localPort);
-  }
+  isConn = WiFi.localIP() != 0;
 
   Serial.println("SSLAC16 ver" + String(version[0]) + "." + String(version[1]) + "rev" + String(version[2]));
 
@@ -387,22 +388,25 @@ void setup(void) {
   }
 
   Serial.println(msStart);
-  Serial.println("Ready");
 }
 
 
 void loop(void) {
-  if (Current_ch == 16) Current_ch = 0;
+  if (Current_ch == 16) 
+    Current_ch = 0;
 
   delay(1);
   ticker();
+  
   server.handleClient();
+  
   if ((digitalRead(0) == 0) and (isPressed == 0)) {
     isPressed = 1;
   }
+  
   if ((digitalRead(0) == 1) and (isPressed == 1)) {
     isPressed = 0;
-    if (EmLight == 0) EmLight = 1; else EmLight = 0;
+    EmLight = EmLight == 0 ? 1 : 0;
   }
 
   setChannelPWM(Current_ch);
