@@ -142,6 +142,9 @@ void ticker() {
 }
 
 void setTimeRTC() {
+  if (isRTC == 0)
+    return;
+  
   if (isRTC == 1)
     RTC.write(tm);
   else
