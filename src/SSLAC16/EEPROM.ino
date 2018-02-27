@@ -120,7 +120,6 @@ void readAllEEPROM()
     addr += 2;
   }
   
-  //FIME: why 5 bytes skipped?
   addr += 2;
   addr += 2; 
   addr++;
@@ -142,8 +141,7 @@ void readAllEEPROM()
   }
   addr++;
   
-  isAlone = EEPROM.read(addr);
-  Serial.print("isAlone Addr:"); Serial.println(addr);
+  //isAlone removed
   addr++;
   
   pOneWire = EEPROM.read(addr);
@@ -232,7 +230,6 @@ void readAllEEPROM()
   addr = readEmLight(addr);
   Serial.print("EmLight end Addr:"); Serial.println(addr);
   
-  Serial.println(sizeof Pumps);
   addr = 1024;
   
   Serial.print("old chanell begin schedule Addr:"); Serial.println(addr);
@@ -292,16 +289,9 @@ void readAllEEPROM()
   }
   addr++;
   
-  tAlarm.index = EEPROM.read(addr);
-  Serial.print("tAlarm.index Addr:"); Serial.println(addr);
+  //tAlarm removed
   addr++;
-  
-  tAlarm.temp = EEPROM.read(addr);
-  Serial.print("tAlarm.temp Addr:"); Serial.println(addr);
   addr++;
-  
-  tAlarm.step = EEPROM.read(addr);
-  Serial.print("tAlarm.step Addr:"); Serial.println(addr);
   addr++;
   
   isHidePassword = EEPROM.read(addr);
@@ -311,7 +301,7 @@ void readAllEEPROM()
   Serial.print("Last addr3 "); Serial.println(addr);
   readVersion();
   
-  if (version[1] != 36) 
+  if (version[1] < 36) 
   {
     convertPWM();
     version[1] = 36;
@@ -348,7 +338,7 @@ void saveAllEEPROM()
   EEPROM.write(addr, pSCL);
   addr++;
   
-  EEPROM.write(addr, isAlone);
+  //isAlone removed
   addr++;
   
   EEPROM.write(addr, pOneWire);
@@ -449,13 +439,9 @@ void saveAllEEPROM()
     addr++;
   }
   
-  EEPROM.write(addr, tAlarm.index);
+  //tAlarm removed
   addr++;
-  
-  EEPROM.write(addr, tAlarm.temp);
   addr++;
-  
-  EEPROM.write(addr, tAlarm.step);
   addr++;
   
   EEPROM.write(addr, isHidePassword);

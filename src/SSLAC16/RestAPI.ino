@@ -119,7 +119,7 @@ void _get() {
                  "\"pwmFreq\"", "\"EmLight\"", "\"pSDA\"", "\"pSCL\"", "\"pOneWire\"", \
                  "\"isConn\"", "\"IP\"", "\"SSID\"", "\"isPCA\"", "\"isRCT\"", \
                  "\"is_time_set\"", "\"hostname\"", "\"isMaster\"", "\"isSlave\"", "\"ID\"", "\"Sender_ID\"", \
-                 isMode, isSetupCh, channelGroup, isAlone, \
+                 0, 0, 0, 0, \
                  pwmFreq, EmLight, pSDA, pSCL, pOneWire, \
                  isConn, WiFi.localIP().toString().c_str(), ssid.c_str(), isPCA, isRTC, \
                  is_time_set, esp_hostname.c_str(), 0, 0, ESP.getChipId(), 0, WiFi.softAPIP().toString().c_str(), \
@@ -133,8 +133,9 @@ void _get() {
                  //Uptime seconds
                  _millis / 1000 % 60, \
                  Time_Zone, \
+                 //TODO: remove tAlarm
                  "isAlarm", "tAlarm.index", "tAlarm.temp", "tAlarm.step", \
-                 isAlarm, tAlarm.index, tAlarm.temp, tAlarm.step, isHidePassword);
+                 0, 0, 0, 0, isHidePassword);
         server.send(200, text_json, stream);
         return;
       }
@@ -169,8 +170,9 @@ void _get() {
       }
 
     }
+    //TODO: remove
     if (server.argName(0) == "alarm") {
-      snprintf(stream, 1024, "[%d,%d,%d]\n\r", tAlarm.index, tAlarm.temp, tAlarm.step);
+      snprintf(stream, 1024, "[%d,%d,%d]\n\r", 0, 0, 0);
       server.send(200, text_json, stream);
       return;
     }
@@ -261,7 +263,7 @@ void _set() {
       isConn = false;
       WiFi.disconnect(true);
       WiFi.begin(ssid.c_str(), password.c_str());
-      tmp_a = 0;
+      int tmp_a = 0;
       while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         Serial.print(F("."));
@@ -332,7 +334,7 @@ void _set() {
       isConn = false;
       WiFi.disconnect(true);
       WiFi.begin(ssid.c_str(), password.c_str());
-      tmp_a = 0;
+      int tmp_a = 0;
       while (WiFi.status() != WL_CONNECTED) {
 
         delay(500);
@@ -355,7 +357,6 @@ void _set() {
       return;
     }
     if (server.argName(0) == "isAlone") {
-      isAlone = server.arg(0).toInt();
       return;
     }
     if (server.argName(0) == "pwmFreq") {

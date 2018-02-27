@@ -24,26 +24,22 @@ extern "C" {
 
 byte version[3] = {0, 36, 1};
 
-typedef struct _adoptation {
-  byte groupK[8];
-  byte days[8];
-  tmElements_t startDate[8];
-};
-_adoptation adoptation;
-
-typedef struct _shed {
+typedef struct _shed 
+{
   byte Hour = 256;
   byte Minute = 256;
 };
 
-typedef struct _newAlarm {
+typedef struct _newAlarm 
+{
   byte index = 255;
   byte temp;
   byte step = 10;
 };
 _newAlarm newAlarm[8];
 
-typedef struct _newCh {
+typedef struct _newCh 
+{
   int value[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
   _shed time[16];
   byte color[3];
@@ -54,14 +50,8 @@ typedef struct _newCh {
 };
 _newCh newCh[16];
 
-typedef struct _pump {
-  int value;
-  byte index;
-  byte gpio;
-};
-_pump Pumps[16];
-
-typedef struct _group {
+typedef struct _group 
+{
   char name[32];
   byte alarmIndex = 255;
   byte temp = 50;
@@ -70,13 +60,9 @@ typedef struct _group {
 };
 _group group[8];
 
-typedef struct _alarm_temperature {
-  byte index = 255;
-  byte temp = 50;
-  byte step = 10;
-};
-
-typedef struct _ch {
+//TODO: remove
+typedef struct _ch 
+{
   int Max;
   int Min;
   int Cur;
@@ -90,7 +76,8 @@ typedef struct _ch {
 };
 _ch ch[16];
 
-typedef struct _ds18x20 {
+typedef struct _ds18x20 
+{
   DeviceAddress addr;
   float Temp;
   char Desc[16];
@@ -98,65 +85,56 @@ typedef struct _ds18x20 {
 };
 _ds18x20 Sensor[8];
 
-byte Current_ch = 0;
 unsigned long _millis = 0;
 
-File fsUploadFile;
+const int max_addr = 4096;
+
+byte playTime = 255;
+
+ESP8266WebServer server(80);
 const String text_html = "text/html";
 const String text_plain = "text/plain";
 const String text_json = "text/json";
 const String htm = ".htm";
 const String html = ".html";
-byte playTime = 255;
-int newCurrent[16];
-int emLight[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-byte foundedNet;
-
-DeviceAddress addr;
-_alarm_temperature tAlarm;
-byte isAlarm[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-
+char stream[1024];
 bool isFirmware = false;
 bool isSPIFFS = false;
-bool isConn = false;
-char stream[1024];
-byte isRTC = 0; // 0 - no RTC, 1 - DS1307, 2 - PCF8563, 3 - both
-byte isPCA = 0;
-int tmp_a = 0;
-const int max_addr = 4096;
-byte pSDA = 4;
-byte pSCL = 5;
-byte pOneWire = 13;
-byte channelGroup = 0;
+File fsUploadFile;
+
+byte Current_ch = 0;
+int newCurrent[16];
+byte EmLight = 0;
+int emLight[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 byte isPressed = 0;
 
+Adafruit_PWMServoDriver pwm;
+
+DeviceAddress addr;
+byte pSDA = 4;
+byte pSCL = 5;
+int pwmFreq = 1000;
+byte isPCA = 0;
+
+byte pOneWire = 13;
+OneWire oneWire(pOneWire);
+DallasTemperature sensors(&oneWire);
+byte cSensor;
+byte buff[sizeof Sensor];
+
+byte foundedNet;
 String ssid ;
 String password ;
-const char *ssid_ap = "";
-const char *passwd_ap = "";
 String esp_hostname = "";
-int pwmFreq = 1000;
+byte isHidePassword = 0;
+bool isConn = false;
+
+byte isRTC = 0; // 0 - no RTC, 1 - DS1307, 2 - PCF8563, 3 - both
 byte Time_Zone;
 byte is_time_set = 1;
 unsigned long msCurrent = 0;
 unsigned long msStart = 0;
-byte isFan = 0;
-byte isMode = 1;
-byte isAlone;
-byte isSetupCh = 0;
-int plusMs = 0;
-
-byte EmLight = 0;
-byte isHidePassword = 0;
 tmElements_t tm;
-
-ESP8266WebServer server(80);
-
-Adafruit_PWMServoDriver pwm;
-OneWire oneWire(13);
-DallasTemperature sensors(&oneWire);
-byte buff[sizeof Sensor ];
-byte cSensor;
 
 void setup(void) 
 {

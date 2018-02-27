@@ -15,6 +15,7 @@ void setupWiFi()
   {
     WiFi.begin(ssid.c_str(), password.c_str());
 
+    int tmp_a = 0;
     while (WiFi.status() != WL_CONNECTED) 
     {
       delay(500);
