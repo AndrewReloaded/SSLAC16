@@ -39,7 +39,7 @@ For each channel group, you can set your own critical temperature and decreasing
 Using this feature, you can see in real time as will appear on your aquarium light at any given time.
 Functions can be applied both to all channels at once, and to any group of channels.
  
-##### Mode. "Emergency light"
+##### "Emergency light" mode
 May use any number of light control channels. Each used channel has individual dimming settings for this mode.
  
 ##### 8 temperature sensors tip.DS18x20
