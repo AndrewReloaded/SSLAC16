@@ -171,13 +171,15 @@ void setup(void) {
   Serial.println("Start setup");
   Serial.println(__DATE__);
   Serial.println(__TIME__);
+  
+  setupAll();
 
   Serial.println("Setup complete");
 }
 
 
 
-void setupAll(void) {
+void setupAll {
 
   configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
   SPIFFS.begin();
