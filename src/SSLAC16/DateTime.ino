@@ -1,6 +1,52 @@
 #define PCF8563address 0x51
 #define DS1307address 0x68
-void check_RTC() {
+
+void setupDateTime()
+{
+  checkRTC();
+  
+  if (isRTC != 0) 
+  {
+    if (isRTC == 1) 
+    {
+      ds1307RTC.read(tm);
+    }
+    else if (isRTC == 2) 
+    {
+      readPCF8563(tm);
+    }
+  }
+  
+  _millis = millis();
+  configTime((Time_Zone - 127) * 360, 0, "pool.ntp.org", "time.nist.gov");
+  
+  if (isConn) 
+  {
+    byte i = 0;
+    while ((sntp_get_current_timestamp() == 0) and (i < 32)) 
+    {
+      delay(1000);
+      Serial.print(".");
+      i++;
+    }
+    if (sntp_get_current_timestamp() != 0) 
+    {
+      tm.Hour = (hour(sntp_get_current_timestamp()));
+      tm.Minute = (minute(sntp_get_current_timestamp()));
+      tm.Second = (second(sntp_get_current_timestamp()));
+      tm.Day = (day(sntp_get_current_timestamp()));
+      tm.Month = (month(sntp_get_current_timestamp()));
+      tm.Year = (year(sntp_get_current_timestamp()));
+      msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
+      is_time_set = 1;
+      setTimeRTC();
+      Serial.println();
+    }
+  }
+}
+
+void checkRTC() 
+{
   Wire.beginTransmission(PCF8563address);
   if (Wire.endTransmission() == 0)
   {
@@ -16,15 +62,18 @@ void check_RTC() {
   if (isRTC == 0) Serial.println("RTC not found !!!");
 }
 
-byte bcdToDec(byte value) {
+byte bcdToDec(byte value) 
+{
   return ((value / 16) * 10 + value % 16);
 }
 
-byte decToBcd(byte value) {
+byte decToBcd(byte value) 
+{
   return (value / 10 * 16 + value % 10);
 }
 
-void setPCF8563(tmElements_t &tm_pcf) {
+void setPCF8563(tmElements_t &tm_pcf) 
+{
   // this sets the time and date to the PCF8563
 
   Wire.beginTransmission(PCF8563address);
@@ -39,7 +88,8 @@ void setPCF8563(tmElements_t &tm_pcf) {
   Wire.endTransmission();
 }
 
-void readPCF8563(tmElements_t &tm_pcf) {
+void readPCF8563(tmElements_t &tm_pcf) 
+{
 // this gets the time and date from the PCF8563
 
   Wire.beginTransmission(PCF8563address);
@@ -55,43 +105,64 @@ void readPCF8563(tmElements_t &tm_pcf) {
   tm_pcf.Year       = bcdToDec(Wire.read());
 }
 
-
-
-
-void ticker() {
-
+void ticker() 
+{
   _millis = millis();
-  if ((msStart == 0) and (msCurrent == 0)) {
+  
+  if ((msStart == 0) and (msCurrent == 0)) 
+  {
     Serial.print("msSatrt=0: ");
     msStart = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
     Serial.println(msStart);
-    if (msStart > _millis) msStart = msStart - _millis;
+    if (msStart > _millis)
+    {
+      msStart = msStart - _millis;
+    }
     msCurrent = msStart + _millis;
   }
-  if ((msStart == 0) and (msCurrent > 0)) {
+  
+  if ((msStart == 0) and (msCurrent > 0)) 
+  {
     msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
     Serial.println(msStart);
-    while (1) {
+    while (1) 
+    {
       yield();
-      if (msCurrent > _millis) {
+      if (msCurrent > _millis) 
+      {
         msStart = msCurrent - _millis;
         Serial.print("msStart rol:");
         Serial.println(msStart);
         break;
-      } else msCurrent += 86400000;
+      } 
+      else
+      { 
+        msCurrent += 86400000;
+      }
     }
   }
 
-  if (_millis % 1000 == 0) {
-    if (isRTC == 1)  ds1307RTC.read(tm);
-    if (isRTC == 2)  readPCF8563(tm);
-    if (isRTC == 0) {
+  if (_millis % 1000 == 0) 
+  {
+    if (isRTC == 1)  
+    {
+      ds1307RTC.read(tm);
+    }
+    else if (isRTC == 2)  
+    {
+      readPCF8563(tm);
+    }
+    else if (isRTC == 0) 
+    {
       tm.Hour = (msCurrent / 1000)  % 86400L / 3600;
       tm.Minute = (msCurrent / 1000) % 3600 / 60;
       tm.Second = (msCurrent / 1000) % 60;
     }
-    if ((is_time_set == 0) and (isConn)) {
-      if (sntp_get_current_timestamp() != 0) {
+    
+    if ((is_time_set == 0) and (isConn)) 
+    {
+      if (sntp_get_current_timestamp() != 0) 
+      {
         tm.Hour = (hour(sntp_get_current_timestamp()));
         tm.Minute = (minute(sntp_get_current_timestamp()));
         tm.Second = (second(sntp_get_current_timestamp()));
@@ -100,22 +171,30 @@ void ticker() {
         tm.Year = (year(sntp_get_current_timestamp()));
         msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
         is_time_set = 1;
+        
         setTimeRTC();
       }
     }
-
   }
 
-  if (_millis % 5000 == 0) {
+  if (_millis % 5000 == 0) 
+  {
     sensors.requestTemperatures();
-    for (byte i = 0; i < 8; i++) {
-      if (group[i].alarmIndex != 255) {
+    for (byte i = 0; i < 8; i++) 
+    {
+      if (group[i].alarmIndex != 255) 
+      {
         byte _index = group[i].alarmIndex;
-        if (group[i].temp < Sensor[_index].Temp) {
+        if (group[i].temp < Sensor[_index].Temp) 
+        {
           group[i].isAlarm = 1;
-          for (byte j = 0; j < 16; j++) {
-            if ((newCh[j].group == i) and (newCh[j].type == 0)) {
-              if (newCurrent[j] > group[i].step) {
+          
+          for (byte j = 0; j < 16; j++) 
+          {
+            if ((newCh[j].group == i) and (newCh[j].type == 0)) 
+            {
+              if (newCurrent[j] > group[i].step) 
+              {
                 newCurrent[j] -= group[i].step;
                 invPWM(j, newCurrent[j]);
               }
@@ -123,31 +202,46 @@ void ticker() {
             }
           }
         }
-        else group[i].isAlarm = 0;
+        else 
+        {
+          group[i].isAlarm = 0;
+        }
 
-      } else group[i].isAlarm = 0;
+      } 
+      else 
+      {
+        group[i].isAlarm = 0;
+      }
     }
 
-    for (byte i = 0; i < cSensor; i++) {
+    for (byte i = 0; i < cSensor; i++) 
+    {
       Sensor[i].Temp = sensors.getTempC(Sensor[i].addr);
     }
   }
 
-  if (_millis % 10 == 0) {
+  if (_millis % 10 == 0) 
+  {
     if (msCurrent >= 86400000)
+    {
       msCurrent = 0;
+    }
     else
-      msCurrent += 10 ;
+    {
+      msCurrent += 10;
+    }
   }
 }
 
-void setTimeRTC() {
-  if (isRTC == 0)
-    return;
-  
+void setTimeRTC() 
+{  
   if (isRTC == 1)
+  {
     ds1307RTC.write(tm);
-  else
+  }
+  else if (isRTC == 2)
+  {
     setPCF8563(tm);
+  }
 }
 

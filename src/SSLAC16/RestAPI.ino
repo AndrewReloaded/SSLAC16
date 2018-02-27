@@ -1,3 +1,4 @@
+
 void _get() {
   int value;
   snprintf(stream, 1024, "%s\n\r", "Not implemented");
@@ -215,7 +216,6 @@ void _get() {
                  Sensor[value].index, \
                  int(Sensor[value].Temp * 1000), \
                  Sensor[value].Desc);
-        //}
       }
       server.send(200, text_json, stream);
       return;
@@ -249,6 +249,7 @@ void _get() {
   }
 
 }
+
 void _set() {
   int value;
   if (server.method() == HTTP_POST) {
@@ -273,8 +274,6 @@ void _set() {
       }
 
     }
-
-
 
     if (server.argName(0) == "grN") {
       if ((server.arg(0) != "all") and (server.arg(0) != "")) {
@@ -398,7 +397,7 @@ void _set() {
       return;
     }
     if (server.argName(0) == "save") {
-      saveall();
+      saveAllEEPROM();
       return;
     }
     if (server.argName(0) == "reboot") {
@@ -495,18 +494,6 @@ void _set() {
     }
   }
 }
-void handleNotFound() {
-  if (server.uri().endsWith(".pdf")) server.send(404, text_plain, F("May be You are using 512k module\n\rIn this case no room for manual, sorry."));
-  String _resp = "Not found " + server.uri() + "\n";
-  for (byte i = 0; i < server.args(); i++) {
-    Serial.print("arg("); Serial.print(i); Serial.print(") - ");
-    Serial.println(server.argName(i) + " : " + server.arg(i));
-  }
-  server.send(404, text_plain, _resp);
-
-
-}
-
 
 byte returnIndex(int _tp, byte _ch) {
   byte _index = 0;
@@ -520,9 +507,6 @@ byte returnIndex(int _tp, byte _ch) {
     if ((newCh[_ch].time[i].Hour * 60 + newCh[_ch].time[i].Minute < _tp) and (newCh[_ch].time[i + 1].Hour * 60 + newCh[_ch].time[i + 1].Minute > _tp)) return _index;
   }
 }
-
-
-
 
 void addTpCh(int _tp, byte _ch, byte _index, byte _Channel, int _Value) {
   _shed _time[16];
@@ -551,6 +535,7 @@ void addTpCh(int _tp, byte _ch, byte _index, byte _Channel, int _Value) {
   memcpy(newCh[_ch].time, _time, sizeof _time);
   memcpy(newCh[_ch].value, _value, sizeof _value);
 }
+
 void addTp(int _tp, byte _gr, byte _Channel, int _Value) {
   for (byte i = 0; i < 16; i++) {
     if ((newCh[i].group == _gr) and (newCh[i].type == 0)) {
