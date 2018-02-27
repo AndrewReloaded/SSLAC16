@@ -9,7 +9,8 @@ void setupDateTime()
   {
     if (isRTC == 1) 
     {
-      ds1307RTC.read(tm);
+      //FIXME
+      //ds1307RTC.read(tm);
     }
     else if (isRTC == 2) 
     {
@@ -146,7 +147,8 @@ void ticker()
   {
     if (isRTC == 1)  
     {
-      ds1307RTC.read(tm);
+      //FIXME
+      //ds1307RTC.read(tm);
     }
     else if (isRTC == 2)  
     {
@@ -237,7 +239,8 @@ void setTimeRTC()
 {  
   if (isRTC == 1)
   {
-    ds1307RTC.write(tm);
+    //FIXME
+    //ds1307RTC.write(tm);
   }
   else if (isRTC == 2)
   {

@@ -6,7 +6,8 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <EEPROM.h>
 #include <Time.h>
-#include <DS1307RTC.h>
+//FIXME
+//#include <DS1307RTC.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <FS.h>
@@ -198,7 +199,6 @@ void setup(void)
   Serial.println(">> setupPWM done");
 
   Serial.println("Setup complete");
-  Serial.println(msStart);
 }
 
 void loop(void) 
