@@ -88,7 +88,6 @@ void _get()
       }
     }
 
-
     if (server.argName(0) == "wifi") 
     {
       if (server.arg(0) == "disconnect") 

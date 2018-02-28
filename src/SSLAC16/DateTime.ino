@@ -3,23 +3,15 @@
 
 void setupDateTime()
 {
+  _millis = millis();
+  configTime((Time_Zone - 127) * 360, 0, "pool.ntp.org", "time.nist.gov");
+  
   checkRTC();
   
   getRTCDateTime();
   
-  _millis = millis();
-  configTime((Time_Zone - 127) * 360, 0, "pool.ntp.org", "time.nist.gov");
-  
   if (isConn) 
-  {
-    byte i = 0;
-    while ((sntp_get_current_timestamp() == 0) and (i < 32)) 
-    {
-      delay(1000);
-      Serial.print(".");
-      i++;
-    }
-    
+  {   
     syncDateTimeWithSntp();
   }
 }
@@ -44,9 +36,10 @@ void checkRTC()
   {
     isRTC = 2;
   }
+  
   if (isRTC == 0) 
   {
-    Serial.println("RTC not found !!!");
+    Serial.println("RTC not found");
   }
 }
 
@@ -76,19 +69,22 @@ void setRTCDateTime()
 
 void syncDateTimeWithSntp()
 {
-  if (sntp_get_current_timestamp() != 0) 
+  uint32 currentTimestamp = sntp_get_current_timestamp();
+  if (currentTimestamp != 0) 
   {
-    tm.Hour = (hour(sntp_get_current_timestamp()));
-    tm.Minute = (minute(sntp_get_current_timestamp()));
-    tm.Second = (second(sntp_get_current_timestamp()));
-    tm.Day = (day(sntp_get_current_timestamp()));
-    tm.Month = (month(sntp_get_current_timestamp()));
-    tm.Year = (year(sntp_get_current_timestamp()));
+    tm.Hour = (hour(currentTimestamp));
+    tm.Minute = (minute(currentTimestamp));
+    tm.Second = (second(currentTimestamp));
+    tm.Day = (day(currentTimestamp));
+    tm.Month = (month(currentTimestamp));
+    tm.Year = (year(currentTimestamp));
     msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
     
     setRTCDateTime();
     
     is_time_set = 1;
+
+    Serial.print("Date and Time are synchronized with SNTP: "); Serial.print(tm.Hour); Serial.print(":"); Serial.println(tm.Minute);
   }
 }
 
