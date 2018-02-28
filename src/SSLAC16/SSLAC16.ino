@@ -6,8 +6,6 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <EEPROM.h>
 #include <Time.h>
-//FIXME
-//#include <DS1307RTC.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <FS.h>
@@ -15,6 +13,8 @@
 extern "C" {
 #include <sntp.h>
 }
+
+//TODO: rename variables
 
 #define TEMPERATURE_PRECISION 9
 #define USE_SERIAL Serial
@@ -127,8 +127,8 @@ String esp_hostname = "";
 byte isHidePassword = 0;
 bool isConn = false;
 
-//TODO: check isRTC conditions
-byte isRTC = 0; // 0 - no RTC, 1 - DS1307, 2 - PCF8563, 3 - both
+//TODO: rename isRTC to RTCType
+byte isRTC = 0; // 0 - no RTC, 1 - DS1307, 2 - PCF8563
 byte Time_Zone;
 byte is_time_set = 1;
 unsigned long msCurrent = 0;

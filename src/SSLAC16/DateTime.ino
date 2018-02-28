@@ -5,18 +5,7 @@ void setupDateTime()
 {
   checkRTC();
   
-  if (isRTC != 0) 
-  {
-    if (isRTC == 1) 
-    {
-      //FIXME
-      //ds1307RTC.read(tm);
-    }
-    else if (isRTC == 2) 
-    {
-      readPCF8563(tm);
-    }
-  }
+  getRTCDateTime();
   
   _millis = millis();
   configTime((Time_Zone - 127) * 360, 0, "pool.ntp.org", "time.nist.gov");
@@ -35,23 +24,6 @@ void setupDateTime()
   }
 }
 
-void syncDateTimeWithSntp()
-{
-  if (sntp_get_current_timestamp() != 0) 
-  {
-    tm.Hour = (hour(sntp_get_current_timestamp()));
-    tm.Minute = (minute(sntp_get_current_timestamp()));
-    tm.Second = (second(sntp_get_current_timestamp()));
-    tm.Day = (day(sntp_get_current_timestamp()));
-    tm.Month = (month(sntp_get_current_timestamp()));
-    tm.Year = (year(sntp_get_current_timestamp()));
-    msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
-    
-    is_time_set = 1;
-    setTimeRTC();
-  }
-}
-
 void checkRTC() 
 {
   isRTC = 0;
@@ -60,8 +32,6 @@ void checkRTC()
   if (Wire.endTransmission() == 0)
   {
     isRTC += 2;
-    //TODO: why?
-    readPCF8563(tm);
   }
   
   Wire.beginTransmission(DS1307address);
@@ -80,6 +50,48 @@ void checkRTC()
   }
 }
 
+void getRTCDateTime()
+{
+  if (isRTC == 1) 
+  {
+    readDS1307(tm);
+  }
+  else if (isRTC == 2) 
+  {
+    readPCF8563(tm);
+  }
+}
+
+void setRTCDateTime() 
+{  
+  if (isRTC == 1)
+  {
+    setDS1307(tm);
+  }
+  else if (isRTC == 2)
+  {
+    setPCF8563(tm);
+  }
+}
+
+void syncDateTimeWithSntp()
+{
+  if (sntp_get_current_timestamp() != 0) 
+  {
+    tm.Hour = (hour(sntp_get_current_timestamp()));
+    tm.Minute = (minute(sntp_get_current_timestamp()));
+    tm.Second = (second(sntp_get_current_timestamp()));
+    tm.Day = (day(sntp_get_current_timestamp()));
+    tm.Month = (month(sntp_get_current_timestamp()));
+    tm.Year = (year(sntp_get_current_timestamp()));
+    msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
+    
+    setRTCDateTime();
+    
+    is_time_set = 1;
+  }
+}
+
 byte bcdToDec(byte value) 
 {
   return ((value / 16) * 10 + value % 16);
@@ -90,24 +102,40 @@ byte decToBcd(byte value)
   return (value / 10 * 16 + value % 10);
 }
 
-void setPCF8563(tmElements_t &tm_pcf) 
+void setPCF8563(tmElements_t &aTm) 
 {
   // this sets the time and date to the PCF8563
   Wire.beginTransmission(PCF8563address);
   Wire.write(0x02);
   
-  Wire.write(decToBcd(tm_pcf.Second));
-  Wire.write(decToBcd(tm_pcf.Minute));
-  Wire.write(decToBcd(tm_pcf.Hour));
-  Wire.write(decToBcd(tm_pcf.Day));
-  Wire.write(decToBcd(tm_pcf.Wday));
-  Wire.write(decToBcd(tm_pcf.Month));
-  Wire.write(decToBcd(tm_pcf.Year));
+  Wire.write(decToBcd(aTm.Second));
+  Wire.write(decToBcd(aTm.Minute));
+  Wire.write(decToBcd(aTm.Hour));
+  Wire.write(decToBcd(aTm.Day));
+  Wire.write(decToBcd(aTm.Wday));
+  Wire.write(decToBcd(aTm.Month));
+  Wire.write(decToBcd(aTm.Year));
   
   Wire.endTransmission();
 }
 
-void readPCF8563(tmElements_t &tm_pcf) 
+void setDS1307(tmElements_t &aTm)
+{
+  Wire.beginTransmission(DS1307address);
+  Wire.write((uint8_t)0x00); // reset register pointer  
+  
+  Wire.write(decToBcd(aTm.Second)) ;   
+  Wire.write(decToBcd(aTm.Minute));
+  Wire.write(decToBcd(aTm.Hour));      // sets 24 hour format
+  Wire.write(decToBcd(aTm.Wday));   
+  Wire.write(decToBcd(aTm.Day));
+  Wire.write(decToBcd(aTm.Month));
+  Wire.write(decToBcd(tmYearToY2k(tm.Year))); 
+
+  Wire.endTransmission();
+}
+
+void readPCF8563(tmElements_t &aTm) 
 {
   // this gets the time and date from the PCF8563
   Wire.beginTransmission(PCF8563address);
@@ -115,13 +143,30 @@ void readPCF8563(tmElements_t &tm_pcf)
   Wire.endTransmission();
   
   Wire.requestFrom(PCF8563address, 7);
-  tm_pcf.Second = bcdToDec(Wire.read() & B01111111); // remove VL error bit
-  tm_pcf.Minute = bcdToDec(Wire.read() & B01111111); // remove unwanted bits from MSB
-  tm_pcf.Hour   = bcdToDec(Wire.read() & B00111111);
-  tm_pcf.Day    = bcdToDec(Wire.read() & B00111111);
-  tm_pcf.Wday   = bcdToDec(Wire.read() & B00000111);
-  tm_pcf.Month  = bcdToDec(Wire.read() & B00011111);  // remove century bit, 1999 is over
-  tm_pcf.Year   = bcdToDec(Wire.read());
+  aTm.Second = bcdToDec(Wire.read() & B01111111); // remove VL error bit
+  aTm.Minute = bcdToDec(Wire.read() & B01111111); // remove unwanted bits from MSB
+  aTm.Hour   = bcdToDec(Wire.read() & B00111111);
+  aTm.Day    = bcdToDec(Wire.read() & B00111111);
+  aTm.Wday   = bcdToDec(Wire.read() & B00000111);
+  aTm.Month  = bcdToDec(Wire.read() & B00011111);  // remove century bit, 1999 is over
+  aTm.Year   = bcdToDec(Wire.read());
+}
+
+void readDS1307(tmElements_t &aTm)
+{
+  Wire.beginTransmission(DS1307address);
+  Wire.write((uint8_t)0x00); 
+  Wire.endTransmission();
+
+  // request the 7 data fields   (secs, min, hr, dow, date, mth, yr)
+  Wire.requestFrom(DS1307address, tmNbrFields);
+  aTm.Second = bcdToDec(Wire.read() & 0x7f);   
+  aTm.Minute = bcdToDec(Wire.read() );
+  aTm.Hour   = bcdToDec(Wire.read() & 0x3f);  // mask assumes 24hr clock
+  aTm.Wday   = bcdToDec(Wire.read() );
+  aTm.Day    = bcdToDec(Wire.read() );
+  aTm.Month  = bcdToDec(Wire.read() );
+  aTm.Year   = y2kYearToTm((bcdToDec(Wire.read())));
 }
 
 void ticker() 
@@ -163,20 +208,15 @@ void ticker()
 
   if (_millis % 1000 == 0) 
   {
-    if (isRTC == 1)  
-    {
-      //FIXME
-      //ds1307RTC.read(tm);
-    }
-    else if (isRTC == 2)  
-    {
-      readPCF8563(tm);
-    }
-    else if (isRTC == 0) 
+    if (isRTC == 0) 
     {
       tm.Hour = (msCurrent / 1000)  % 86400L / 3600;
       tm.Minute = (msCurrent / 1000) % 3600 / 60;
       tm.Second = (msCurrent / 1000) % 60;
+    }
+    else
+    {
+      getRTCDateTime();
     }
 
     if ((is_time_set == 0) and (isConn))
@@ -241,16 +281,5 @@ void ticker()
   }
 }
 
-void setTimeRTC() 
-{  
-  if (isRTC == 1)
-  {
-    //FIXME
-    //ds1307RTC.write(tm);
-  }
-  else if (isRTC == 2)
-  {
-    setPCF8563(tm);
-  }
-}
+
 
