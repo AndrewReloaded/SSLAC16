@@ -362,17 +362,33 @@ void _set()
     {
       for (byte i = 0; i < server.args(); i++) 
       {
-        if (server.argName(i) == "h") tm.Hour = server.arg(i).toInt();
-        if (server.argName(i) == "m") tm.Minute = server.arg(i).toInt();
-        if (server.argName(i) == "s") tm.Second = server.arg(i).toInt();
-        if (server.argName(i) == "tz") Time_Zone = server.arg(i).toInt();
-        if (is_time_set == 0) is_time_set = 1;
+        if (server.argName(i) == "h") 
+        {
+          tm.Hour = server.arg(i).toInt();
+        }
+        else if (server.argName(i) == "m") 
+        {
+          tm.Minute = server.arg(i).toInt();
+        }
+        else if (server.argName(i) == "s") 
+        {
+          tm.Second = server.arg(i).toInt();
+        }
+        else if (server.argName(i) == "tz") 
+        {
+          Time_Zone = server.arg(i).toInt();
+        }
+        
+        if (is_time_set == 0) 
+        {
+          is_time_set = 1;
+        }
       }
       
       msStart = 0;
       msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second + 1) * 1000;
       ticker();
-      setTimeRTC();
+      setRTCDateTime();
       return;
     }
     

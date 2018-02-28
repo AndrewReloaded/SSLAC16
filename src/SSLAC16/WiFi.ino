@@ -11,15 +11,17 @@ void setupWiFi()
   
   WiFi.mode(WIFI_AP_STA);
   
-  isConn = false;
-  if (foundWiFi(ssid)) 
-  {
-    connectWiFi()
-  }   
+  //isConn = false;
+  //if (foundWiFi(ssid)) 
+  //{
+    connectWiFi();
+  //}   
 }
 
 void connectWiFi()
 {
+  isConn = false;
+  
   WiFi.begin(ssid.c_str(), password.c_str());
 
   int tmp_a = 0;
@@ -39,8 +41,7 @@ void connectWiFi()
 }
 
 void reconnectWiFi()
-{
-  isConn = false;
+{ 
   WiFi.disconnect(true);
   
   connectWiFi();
