@@ -16,9 +16,6 @@ extern "C" {
 #include <sntp.h>
 }
 
-//TODO:
-//Add hardware disabling of softAP
-
 #define TEMPERATURE_PRECISION 9
 #define USE_SERIAL Serial
 
@@ -60,7 +57,7 @@ typedef struct _group
 };
 _group group[8];
 
-//TODO: remove
+//TODO: remove in future versions
 typedef struct _ch 
 {
   int Max;
@@ -122,6 +119,7 @@ DallasTemperature sensors(&oneWire);
 byte cSensor;
 byte buff[sizeof Sensor];
 
+//TODO: Add hardware disabling of softAP
 byte foundedNet;
 String ssid ;
 String password ;
@@ -129,6 +127,7 @@ String esp_hostname = "";
 byte isHidePassword = 0;
 bool isConn = false;
 
+//TODO: check isRTC conditions
 byte isRTC = 0; // 0 - no RTC, 1 - DS1307, 2 - PCF8563, 3 - both
 byte Time_Zone;
 byte is_time_set = 1;

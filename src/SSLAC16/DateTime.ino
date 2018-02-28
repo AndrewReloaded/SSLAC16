@@ -30,37 +30,54 @@ void setupDateTime()
       Serial.print(".");
       i++;
     }
-    if (sntp_get_current_timestamp() != 0) 
-    {
-      tm.Hour = (hour(sntp_get_current_timestamp()));
-      tm.Minute = (minute(sntp_get_current_timestamp()));
-      tm.Second = (second(sntp_get_current_timestamp()));
-      tm.Day = (day(sntp_get_current_timestamp()));
-      tm.Month = (month(sntp_get_current_timestamp()));
-      tm.Year = (year(sntp_get_current_timestamp()));
-      msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
-      is_time_set = 1;
-      setTimeRTC();
-      Serial.println();
-    }
+    
+    syncDateTimeWithSntp();
+  }
+}
+
+void syncDateTimeWithSntp()
+{
+  if (sntp_get_current_timestamp() != 0) 
+  {
+    tm.Hour = (hour(sntp_get_current_timestamp()));
+    tm.Minute = (minute(sntp_get_current_timestamp()));
+    tm.Second = (second(sntp_get_current_timestamp()));
+    tm.Day = (day(sntp_get_current_timestamp()));
+    tm.Month = (month(sntp_get_current_timestamp()));
+    tm.Year = (year(sntp_get_current_timestamp()));
+    msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
+    
+    is_time_set = 1;
+    setTimeRTC();
   }
 }
 
 void checkRTC() 
 {
+  isRTC = 0;
+  
   Wire.beginTransmission(PCF8563address);
   if (Wire.endTransmission() == 0)
   {
     isRTC += 2;
+    //TODO: why?
     readPCF8563(tm);
   }
+  
   Wire.beginTransmission(DS1307address);
   if (Wire.endTransmission() == 0)
   {
     isRTC += 1;
   }
-  if (isRTC == 3) isRTC = 2;
-  if (isRTC == 0) Serial.println("RTC not found !!!");
+  
+  if (isRTC == 3) 
+  {
+    isRTC = 2;
+  }
+  if (isRTC == 0) 
+  {
+    Serial.println("RTC not found !!!");
+  }
 }
 
 byte bcdToDec(byte value) 
@@ -76,9 +93,9 @@ byte decToBcd(byte value)
 void setPCF8563(tmElements_t &tm_pcf) 
 {
   // this sets the time and date to the PCF8563
-
   Wire.beginTransmission(PCF8563address);
   Wire.write(0x02);
+  
   Wire.write(decToBcd(tm_pcf.Second));
   Wire.write(decToBcd(tm_pcf.Minute));
   Wire.write(decToBcd(tm_pcf.Hour));
@@ -86,24 +103,25 @@ void setPCF8563(tmElements_t &tm_pcf)
   Wire.write(decToBcd(tm_pcf.Wday));
   Wire.write(decToBcd(tm_pcf.Month));
   Wire.write(decToBcd(tm_pcf.Year));
+  
   Wire.endTransmission();
 }
 
 void readPCF8563(tmElements_t &tm_pcf) 
 {
-// this gets the time and date from the PCF8563
-
+  // this gets the time and date from the PCF8563
   Wire.beginTransmission(PCF8563address);
   Wire.write(0x02);
   Wire.endTransmission();
+  
   Wire.requestFrom(PCF8563address, 7);
-  tm_pcf.Second     = bcdToDec(Wire.read() & B01111111); // remove VL error bit
-  tm_pcf.Minute     = bcdToDec(Wire.read() & B01111111); // remove unwanted bits from MSB
-  tm_pcf.Hour       = bcdToDec(Wire.read() & B00111111);
-  tm_pcf.Day = bcdToDec(Wire.read() & B00111111);
-  tm_pcf.Wday  = bcdToDec(Wire.read() & B00000111);
-  tm_pcf.Month      = bcdToDec(Wire.read() & B00011111);  // remove century bit, 1999 is over
-  tm_pcf.Year       = bcdToDec(Wire.read());
+  tm_pcf.Second = bcdToDec(Wire.read() & B01111111); // remove VL error bit
+  tm_pcf.Minute = bcdToDec(Wire.read() & B01111111); // remove unwanted bits from MSB
+  tm_pcf.Hour   = bcdToDec(Wire.read() & B00111111);
+  tm_pcf.Day    = bcdToDec(Wire.read() & B00111111);
+  tm_pcf.Wday   = bcdToDec(Wire.read() & B00000111);
+  tm_pcf.Month  = bcdToDec(Wire.read() & B00011111);  // remove century bit, 1999 is over
+  tm_pcf.Year   = bcdToDec(Wire.read());
 }
 
 void ticker() 
@@ -160,22 +178,10 @@ void ticker()
       tm.Minute = (msCurrent / 1000) % 3600 / 60;
       tm.Second = (msCurrent / 1000) % 60;
     }
-    
-    if ((is_time_set == 0) and (isConn)) 
+
+    if ((is_time_set == 0) and (isConn))
     {
-      if (sntp_get_current_timestamp() != 0) 
-      {
-        tm.Hour = (hour(sntp_get_current_timestamp()));
-        tm.Minute = (minute(sntp_get_current_timestamp()));
-        tm.Second = (second(sntp_get_current_timestamp()));
-        tm.Day = (day(sntp_get_current_timestamp()));
-        tm.Month = (month(sntp_get_current_timestamp()));
-        tm.Year = (year(sntp_get_current_timestamp()));
-        msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
-        is_time_set = 1;
-        
-        setTimeRTC();
-      }
+      syncDateTimeWithSntp();
     }
   }
 
