@@ -67,13 +67,6 @@ void handleNotFound()
   server.send(404, text_plain, _resp);
 }
 
-void handleRootPage() 
-{
-  File file = SPIFFS.open("/root_page.html", "r");
-  server.streamFile(file, text_html);
-  file.close();
-}
-
 void handleReboot() 
 {
   reboot();
