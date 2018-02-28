@@ -10,25 +10,40 @@ void setupWiFi()
   startSoftAP();
   
   WiFi.mode(WIFI_AP_STA);
-  byte n = WiFi.scanNetworks();
-  if (foundWiFi(ssid) ) 
+  
+  isConn = false;
+  if (foundWiFi(ssid)) 
   {
-    WiFi.begin(ssid.c_str(), password.c_str());
+    connectWiFi()
+  }   
+}
 
-    int tmp_a = 0;
-    while (WiFi.status() != WL_CONNECTED) 
+void connectWiFi()
+{
+  WiFi.begin(ssid.c_str(), password.c_str());
+
+  int tmp_a = 0;
+  while (WiFi.status() != WL_CONNECTED) 
+  {
+    delay(500);
+    tmp_a++;
+    //isConn = true;
+    if (tmp_a > 128) 
     {
-      delay(500);
-      tmp_a++;
-      isConn = true;
-      if (tmp_a > 128) 
-      {
-        break;
-      }
+      //isConn = false;
+      break;
     }
   }
   
   isConn = WiFi.localIP() != 0;
+}
+
+void reconnectWiFi()
+{
+  isConn = false;
+  WiFi.disconnect(true);
+  
+  connectWiFi();
 }
 
 void startSoftAP() 

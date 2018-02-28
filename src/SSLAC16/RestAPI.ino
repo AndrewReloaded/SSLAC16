@@ -1,11 +1,13 @@
 
-void _get() {
+void _get()
+{
   int value;
   snprintf(stream, 1024, "%s\n\r", "Not implemented");
 
-  if (server.method() == HTTP_GET) {
-
-    if (server.argName(0) == "alarmN") {
+  if (server.method() == HTTP_GET) 
+  {
+    if (server.argName(0) == "alarmN") 
+    {
       snprintf(stream, 1024, "\
           [[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r\
           [%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r[%d,%d],\n\r\
@@ -19,33 +21,41 @@ void _get() {
       return;
     }
 
-    if (server.argName(0) == "emLightN") {
+    if (server.argName(0) == "emLightN") 
+    {
       snprintf(stream, 1024, "[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]\n\r", \
                emLight[0], emLight[1], emLight[2], emLight[3], emLight[4], emLight[5], emLight[6], emLight[7], \
                emLight[8], emLight[9], emLight[10], emLight[11], emLight[12], emLight[13], emLight[14], emLight[15]);
       server.send(200, text_json, stream);
       return;
     }
-    if (server.argName(0) == "chN") {
-      if (server.arg(0) == "name") {
+    
+    if (server.argName(0) == "chN") 
+    {
+      if (server.arg(0) == "name") 
+      {
         snprintf(stream, 1024, "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"]\n\r", \
                  newCh[0].name, newCh[1].name, newCh[2].name, newCh[3].name, newCh[4].name, newCh[5].name, newCh[6].name, newCh[7].name, \
                  newCh[8].name, newCh[9].name, newCh[10].name, newCh[11].name, newCh[12].name, newCh[13].name, newCh[14].name, newCh[15].name);
         server.send(200, text_json, stream);
         return;
       }
-      if (server.arg(0) == "current") {
+      if (server.arg(0) == "current") 
+      {
         snprintf(stream, 1024, "[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]\n\r", \
                  newCurrent[0], newCurrent[1], newCurrent[2], newCurrent[3], newCurrent[4], newCurrent[5], newCurrent[6], newCurrent[7],
                  newCurrent[8], newCurrent[9], newCurrent[10], newCurrent[11], newCurrent[12], newCurrent[13], newCurrent[14], newCurrent[15]);
         server.send(200, text_json, stream);
         return;
       }
-      if ((server.arg(0) == "All") or (server.arg(0) == "")) {
+      if ((server.arg(0) == "All") or (server.arg(0) == "")) 
+      {
         server.send(200, text_json, "[]");
         return;
 
-      } else {
+      } 
+      else
+      {
         byte _ch = server.arg(0).toInt();
         //Serial.print("getting channel:");Serial.println(_ch);
         snprintf(stream, 1024, "[\
@@ -79,17 +89,23 @@ void _get() {
     }
 
 
-    if (server.argName(0) == "wifi") {
-      if (server.arg(0) == "disconnect") {
+    if (server.argName(0) == "wifi") 
+    {
+      if (server.arg(0) == "disconnect") 
+      {
         server.send(200, text_plain, F("\n\r"));
         WiFi.disconnect();
         isConn = 0;
         return;
       }
-      if (server.arg(0) == "") {
+      
+      if (server.arg(0) == "") 
+      {
         WiFi.scanDelete();
         snprintf(stream, 1024, "[%d]\n\r", WiFi.scanNetworks());
-      } else {
+      } 
+      else 
+      {
         snprintf(stream, 1024, "[\"%s\",%d,%d,%d,%d,%d]\n\r", \
                  WiFi.SSID(server.arg(0).toInt()).c_str(), \
                  WiFi.encryptionType(server.arg(0).toInt()), \
@@ -98,15 +114,21 @@ void _get() {
                  WiFi.channel(server.arg(0).toInt()), \
                  WiFi.isHidden(server.arg(0).toInt()));
       }
+      
       server.send(200, text_json, stream);
       return;
     }
-    if ((server.argName(0) == "ssid") and (server.arg(0) == "") and (isConn == 1)) {
+    
+    if ((server.argName(0) == "ssid") and (server.arg(0) == "") and (isConn == 1)) 
+    {
       server.send(200, text_json, "[\"" + ssid + "\"]\n\r");
       return;
     }
-    if (server.argName(0) == "info") {
-      if (server.arg(0) == "") {
+    
+    if (server.argName(0) == "info") 
+    {
+      if (server.arg(0) == "") 
+      {
         snprintf(stream, 1024, "[\
                 [%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s],\n\r\
                 [%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,\"%s\",\"%s\",%d,%d,%d,\"%s\",%d,%d,%d,%d,\"%s\"],\n\r\
@@ -139,7 +161,9 @@ void _get() {
         server.send(200, text_json, stream);
         return;
       }
-      if (server.arg(0) == "0") {
+      
+      if (server.arg(0) == "0") 
+      {
         snprintf(stream, 1024, "[[%d,%d,%d],\n\r[%d,%d,%d,%d],\n\r[%d],\n\r[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]]\n\r", \
                  tm.Hour, tm.Minute, tm.Second, \
                  //Uptime days
@@ -156,7 +180,9 @@ void _get() {
         server.send(200, text_json, stream);
         return;
       }
-      if (server.arg(0) = "1") {
+      
+      if (server.arg(0) = "1") 
+      {
         snprintf(stream, 1024, "[\
               [%d,%d,%d,%d],\n\r\
               [%d,%d,%d],\n\r\
@@ -168,24 +194,29 @@ void _get() {
         server.send(200, text_json, stream);
         return;
       }
-
     }
+    
     //TODO: remove
-    if (server.argName(0) == "alarm") {
+    if (server.argName(0) == "alarm") 
+    {
       snprintf(stream, 1024, "[%d,%d,%d]\n\r", 0, 0, 0);
       server.send(200, text_json, stream);
       return;
     }
-    if (server.argName(0) == "version") {
-
+    
+    if (server.argName(0) == "version") 
+    {
       snprintf(stream, 1024, "[\"%s\",%d,%d,%d,\"%s\",\"%s\"]", \
                "SSLAC16", version[0], version[1], version[2], __DATE__, __TIME__);
       //Serial.println(stream);
       server.send(200, text_json, stream);
       return;
     }
-    if (server.argName(0) == "time") {
-      if (server.arg(0) == "") {
+    
+    if (server.argName(0) == "time") 
+    {
+      if (server.arg(0) == "") 
+      {
         snprintf(stream, 1024, "[\
               [%d,%d,%d],\n\r\
               [%d,%d,%d,%d],\n\r\
@@ -199,12 +230,16 @@ void _get() {
         server.send(200, text_json, stream);
         return;
       }
-
     }
-    if (server.argName(0) == "temp") {
-      if (server.arg(0) == "") {
+    
+    if (server.argName(0) == "temp") 
+    {
+      if (server.arg(0) == "") 
+      {
         snprintf(stream, 1024, "[%d]\n\r", cSensor);
-      } else {
+      } 
+      else 
+      {
         value = server.arg(0).toInt();
         snprintf(stream, 1024, "[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,\"%s\"]\n\r", \
                  Sensor[value].addr[0], \
@@ -222,8 +257,11 @@ void _get() {
       server.send(200, text_json, stream);
       return;
     }
-    if (server.argName(0) == "grN") {
-      if ((server.arg(0) == "all") or (server.arg(0) == "")) {
+    
+    if (server.argName(0) == "grN") 
+    {
+      if ((server.arg(0) == "all") or (server.arg(0) == "")) 
+      {
         snprintf(stream, 1024, "[[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],\n\r\
              [%d,%d,%d,%d,%d,%d,%d,%d],\n\r\
              [%d,%d,%d,%d,%d,%d,%d,%d],\n\r\
@@ -247,192 +285,234 @@ void _get() {
         return;
       }
     }
-
   }
 
 }
 
-void _set() {
+void _set() 
+{
   int value;
-  if (server.method() == HTTP_POST) {
+  if (server.method() == HTTP_POST) 
+  {
     server.send(200, text_plain, F("\n\r"));
 
-    if ((server.argName(0) == "ssid") and (server.argName(1) == "passwd")) {
+    if ((server.argName(0) == "ssid") and (server.argName(1) == "passwd")) 
+    {
       ssid = server.arg(0);
       password = server.arg(1);
-      isConn = false;
-      WiFi.disconnect(true);
-      WiFi.begin(ssid.c_str(), password.c_str());
-      int tmp_a = 0;
-      while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(F("."));
-        tmp_a++;
-        isConn = true;
-        if (tmp_a > 128) {
-          isConn = false;
-          break;
-        }
-      }
-
+      
+      reconnectWiFi();
     }
 
-    if (server.argName(0) == "grN") {
-      if ((server.arg(0) != "all") and (server.arg(0) != "")) {
+    if (server.argName(0) == "grN") 
+    {
+      if ((server.arg(0) != "all") and (server.arg(0) != "")) 
+      {
         byte _gr = server.arg(0).toInt();
         server.arg(1).toCharArray(group[_gr].name, server.arg(1).length() + 1);
       }
     }
-    if (server.argName(0) == "chN") {
-      if ((server.arg(0) != "all") and (server.arg(0) != "")) {
+    
+    if (server.argName(0) == "chN") 
+    {
+      if ((server.arg(0) != "all") and (server.arg(0) != "")) 
+      {
         byte _ch = server.arg(0).toInt();
         server.arg(1).toCharArray(newCh[_ch].name, server.arg(1).length() + 1);
       }
     }
-
   }
-  if (server.method() == HTTP_GET) {
+  
+  if (server.method() == HTTP_GET) 
+  {
     server.send(200, text_plain, F("\n\r"));
-    if (server.argName(0) == "GPIO") {
+    if (server.argName(0) == "GPIO") 
+    {
       return;
     }
-    if (server.argName(0) == "i2c") {
+    
+    if (server.argName(0) == "i2c") 
+    {
       return;
     }
-    if (server.argName(0) == "1wire") {
-      if (server.arg(0) == "rescan") {
+    
+    if (server.argName(0) == "1wire") 
+    {
+      if (server.arg(0) == "rescan") 
+      {
         scanDS18x20();
         return;
       }
-      if (server.arg(0) == "clear") {
+      
+      if (server.arg(0) == "clear") 
+      {
         clearDS18x20();
         cSensor = 0;
         return;
       }
     }
-    if (server.argName(0) == "hostname") {
+    
+    if (server.argName(0) == "hostname") 
+    {
       esp_hostname = "";
       esp_hostname = server.arg(0);
     }
-    if (server.argName(0) == "time") {
-      for (byte i = 0; i < server.args(); i++) {
+    
+    if (server.argName(0) == "time") 
+    {
+      for (byte i = 0; i < server.args(); i++) 
+      {
         if (server.argName(i) == "h") tm.Hour = server.arg(i).toInt();
         if (server.argName(i) == "m") tm.Minute = server.arg(i).toInt();
         if (server.argName(i) == "s") tm.Second = server.arg(i).toInt();
         if (server.argName(i) == "tz") Time_Zone = server.arg(i).toInt();
         if (is_time_set == 0) is_time_set = 1;
       }
+      
       msStart = 0;
       msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second + 1) * 1000;
       ticker();
       setTimeRTC();
       return;
     }
-    if ((server.argName(0) == "ssid") and (server.argName(1) == "passwd")) {
+    
+    if ((server.argName(0) == "ssid") and (server.argName(1) == "passwd")) 
+    {
       ssid = server.arg(0);
       password = server.arg(1);
-      isConn = false;
-      WiFi.disconnect(true);
-      WiFi.begin(ssid.c_str(), password.c_str());
-      int tmp_a = 0;
-      while (WiFi.status() != WL_CONNECTED) {
-
-        delay(500);
-        tmp_a++;
-        isConn = true;
-        if (tmp_a > 128) {
-          isConn = false;
-          break;
-        }
-      }
-
+      
+      reconnectWiFi();
     }
-    if (server.argName(0) == "isMode") {
+    
+    if (server.argName(0) == "isMode") 
+    {
       return;
     }
-    if (server.argName(0) == "isSetupCh") {
+    
+    if (server.argName(0) == "isSetupCh") 
+    {
       return;
     }
-    if (server.argName(0) == "channelGroup") {
+    
+    if (server.argName(0) == "channelGroup") 
+    {
       return;
     }
+    
     if (server.argName(0) == "isAlone") {
       return;
     }
-    if (server.argName(0) == "pwmFreq") {
+    
+    if (server.argName(0) == "pwmFreq") 
+    {
       pwmFreq = server.arg(0).toInt();
       return;
     }
-    if (server.argName(0) == "EmLight") {
+    
+    if (server.argName(0) == "EmLight") 
+    {
       EmLight = server.arg(0).toInt();
       return;
     }
-    if (server.argName(0) == "isHidePassword") {
+    
+    if (server.argName(0) == "isHidePassword") 
+    {
       isHidePassword = server.arg(0).toInt();
       return;
     }
-    if (server.argName(0) == "pSDA") {
+    
+    if (server.argName(0) == "pSDA") 
+    {
       pSDA = server.arg(0).toInt();
       return;
     }
-    if (server.argName(0) == "pSCL") {
+    
+    if (server.argName(0) == "pSCL") 
+    {
       pSCL = server.arg(0).toInt();
       return;
     }
-    if (server.argName(0) == "pOneWire") {
+    
+    if (server.argName(0) == "pOneWire") 
+    {
       pOneWire = server.arg(0).toInt();
       return;
     }
-    if (server.argName(0) == "isMaster") {
+    
+    if (server.argName(0) == "isMaster") 
+    {
       return;
     }
-    if (server.argName(0) == "isSlave") {
+    
+    if (server.argName(0) == "isSlave") 
+    {
       return;
     }
-    if (server.argName(0) == "temp") {
+    
+    if (server.argName(0) == "temp") 
+    {
       value = server.arg(0).toInt();
       server.arg(1).toCharArray(Sensor[value].Desc, 16);
     }
-    if (server.argName(0) == "emLightN") {
+    
+    if (server.argName(0) == "emLightN") 
+    {
       emLight[server.arg(0).toInt()] = server.arg(1).toInt();
       return;
     }
-    if (server.argName(0) == "save") {
+    
+    if (server.argName(0) == "save") 
+    {
       saveAllEEPROM();
       return;
     }
-    if (server.argName(0) == "reboot") {
+    
+    if (server.argName(0) == "reboot") 
+    {
       reboot();
       return;
     }
-    if (server.argName(0) == "alarmN") {
+    
+    if (server.argName(0) == "alarmN") 
+    {
       byte _ch = server.arg(0).toInt();
-      for (byte i = 1; i < server.args(); i++) {
+      
+      for (byte i = 1; i < server.args(); i++) 
+      {
         if (server.argName(i) == "index") newAlarm[_ch].index = server.arg(i).toInt();
         if (server.argName(i) == "temp") newAlarm[_ch].temp = server.arg(i).toInt();
         if (server.argName(i) == "step") newAlarm[_ch].step = server.arg(i).toInt();
       }
     }
-    if (server.argName(0) == "tpN") {
+    
+    if (server.argName(0) == "tpN") 
+    {
       byte _ch = server.arg(0).toInt();
 
-      for (byte i = 1; i < server.args(); i++) {
+      for (byte i = 1; i < server.args(); i++) 
+      {
         newCh[_ch].time[server.argName(i).toInt()].Hour = server.arg(i).toInt() / 60;
         newCh[_ch].time[server.argName(i).toInt()].Minute = server.arg(i).toInt() % 60;
       }
       return;
     }
-    if (server.argName(0) == "playTime") {
+    
+    if (server.argName(0) == "playTime") 
+    {
       playTime = server.arg(0).toInt();
     }
-    if (server.argName(0) == "colorN") {
+    
+    if (server.argName(0) == "colorN") 
+    {
       byte _ch = server.arg(0).toInt();
       newCh[_ch].color[0] = server.arg(1).toInt();
       newCh[_ch].color[1] = server.arg(2).toInt();
       newCh[_ch].color[2] = server.arg(3).toInt();
       return;
     }
-    if (server.argName(0) == "typeN") {
+    
+    if (server.argName(0) == "typeN") 
+    {
       byte _ch = server.arg(0).toInt();
       newCh[_ch].type = server.arg(1).toInt();
       return;
@@ -442,42 +522,59 @@ void _set() {
       newCh[_ch].Inv = server.arg(1).toInt();
       return;
     }
-    if ((server.argName(0) == "grN") and (server.argName(1) == "")) {
+    
+    if ((server.argName(0) == "grN") and (server.argName(1) == "")) 
+    {
       byte _ch = server.arg(0).toInt();
       newCh[_ch].group = server.arg(1).toInt();
       return;
     }
-    if ((server.argName(0) == "grN") and (server.arg(0) != "")) {
+    
+    if ((server.argName(0) == "grN") and (server.arg(0) != "")) 
+    {
       byte _ch = server.arg(0).toInt();
-      for (byte i = 1; i < server.args(); i++) {
+      for (byte i = 1; i < server.args(); i++) 
+      {
         if (server.argName(i) == "alarmIndex") group[_ch].alarmIndex = server.arg(i).toInt();
         if (server.argName(i) == "temp") group[_ch].temp = server.arg(i).toInt();
         if (server.argName(i) == "step") group[_ch].step = server.arg(i).toInt();
       }
       return;
     }
-    if ((server.argName(0) == "addTp") and (server.arg(0) != "")) {
+    
+    if ((server.argName(0) == "addTp") and (server.arg(0) != "")) 
+    {
       int _tp = server.arg(0).toInt();
       byte _gr = 255;
       byte _Ch = 255;
       int _Value = -1;
-      if ((server.argName(1) == "group") and (server.arg(1) != "")) {
+      
+      if ((server.argName(1) == "group") and (server.arg(1) != "")) 
+      {
         _gr = server.arg(1).toInt();
       }
-      if ((server.argName(2) == "chN") and (server.arg(2) != "")) {
+      
+      if ((server.argName(2) == "chN") and (server.arg(2) != "")) 
+      {
         _Ch = server.arg(2).toInt();
       }
-      if ((server.argName(3) == "val") and (server.arg(3) != "")) {
+      
+      if ((server.argName(3) == "val") and (server.arg(3) != "")) 
+      {
         _Value = server.arg(3).toInt();
       }
 
       addTp(_tp, _gr, _Ch, _Value);
       return;
     }
-    if (server.argName(0) == "chN") {
-      if (server.arg(0) != "all") {
+    
+    if (server.argName(0) == "chN") 
+    {
+      if (server.arg(0) != "all") 
+      {
         byte _ch = server.arg(0).toInt();
-        for (byte i = 1; i < server.args(); i++) {
+        for (byte i = 1; i < server.args(); i++) 
+        {
           int _value = server.arg(i).toInt();
           newCh[_ch].value[server.argName(i).toInt()] = _value;
           newCurrent[_ch] = _value;
@@ -485,8 +582,10 @@ void _set() {
 
         }
       }
-      else {
-        for (byte i = 1; i < server.args(); i++) {
+      else 
+      {
+        for (byte i = 1; i < server.args(); i++) 
+        {
           byte _ch = server.argName(i).toInt();
           newCurrent[_ch] = server.arg(i).toInt();
         }
@@ -496,57 +595,82 @@ void _set() {
   }
 }
 
-byte returnIndex(int _tp, byte _ch) {
+byte returnIndex(int _tp, byte _ch) 
+{
   byte _index = 0;
-  if (newCh[_ch].time[0].Hour * 60 + newCh[_ch].time[0].Minute > _tp) return _index;
-  for (byte i = 0; i < 15; i++) {
+  if (newCh[_ch].time[0].Hour * 60 + newCh[_ch].time[0].Minute > _tp)
+  {
+    return _index;
+  }
+  
+  for (byte i = 0; i < 15; i++) 
+  {
     _index = i + 1;
-    if (newCh[_ch].time[i].Hour * 60 + newCh[_ch].time[i].Minute == 0) {
+    if (newCh[_ch].time[i].Hour * 60 + newCh[_ch].time[i].Minute == 0) 
+    {
       _index = i;
       return _index;
     }
-    if ((newCh[_ch].time[i].Hour * 60 + newCh[_ch].time[i].Minute < _tp) and (newCh[_ch].time[i + 1].Hour * 60 + newCh[_ch].time[i + 1].Minute > _tp)) return _index;
+    
+    if ((newCh[_ch].time[i].Hour * 60 + newCh[_ch].time[i].Minute < _tp) and (newCh[_ch].time[i + 1].Hour * 60 + newCh[_ch].time[i + 1].Minute > _tp)) 
+    {
+      return _index;
+    }
   }
 }
 
-void addTpCh(int _tp, byte _ch, byte _index, byte _Channel, int _Value) {
+void addTpCh(int _tp, byte _ch, byte _index, byte _Channel, int _Value) 
+{
   _shed _time[16];
   int _value[16];
-  if (_Value != -1) {
-
+  if (_Value != -1) 
+  {
     return;
   }
-  for (byte i = 0; i < 15; i++) {
-    if (i < _index) {
+  
+  for (byte i = 0; i < 15; i++) 
+  {
+    if (i < _index) 
+    {
       _time[i].Hour = newCh[_ch].time[i].Hour;
       _time[i].Minute = newCh[_ch].time[i].Minute;
       _value[i] = newCh[_ch].value[i];
     }
-    if (i > _index) {
+    
+    if (i > _index) 
+    {
       _time[i].Hour = newCh[_ch].time[i - 1].Hour;
       _time[i].Minute = newCh[_ch].time[i - 1].Minute;
       _value[i] = newCh[_ch].value[i - 1];
     }
-    if (i == _index) {
+    
+    if (i == _index) 
+    {
       _time[i].Hour = _tp / 60;
       _time[i].Minute = _tp % 60;
       _value[i] = newCurrent[_ch];
     }
   }
+  
   memcpy(newCh[_ch].time, _time, sizeof _time);
   memcpy(newCh[_ch].value, _value, sizeof _value);
 }
 
-void addTp(int _tp, byte _gr, byte _Channel, int _Value) {
-  for (byte i = 0; i < 16; i++) {
-    if ((newCh[i].group == _gr) and (newCh[i].type == 0)) {
+void addTp(int _tp, byte _gr, byte _Channel, int _Value) 
+{
+  for (byte i = 0; i < 16; i++) 
+  {
+    if ((newCh[i].group == _gr) and (newCh[i].type == 0)) 
+    {
       addTpCh(_tp, i, returnIndex(_tp, i), _Channel, _Value);
-    } else {
+    } 
+    else 
+    {
       if ((i == _Channel) and (newCh[i].type == 0))
+      {
         addTpCh(_tp, i, returnIndex(_tp, i), _Channel, _Value);
+      }
     }
-
-
   }
 }
 
