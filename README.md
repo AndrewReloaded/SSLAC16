@@ -1,5 +1,4 @@
 # SSLAC16
-(actual version 0.36rev0)
 
 ## Simple&Smart LED Aquarium Controller 16 channels 
 controled over Wi-Fi via WEB interface.
