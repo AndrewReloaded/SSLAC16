@@ -4,8 +4,7 @@
 void setupDateTime()
 {
   _millis = millis();
-  //configTime((Time_Zone - 127) * 360, 0, "pool.ntp.org", "time.nist.gov");
-  configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
+  configTime(Time_Zone * 3600, 0, "pool.ntp.org", "time.nist.gov");
   
   checkRTC();
   
@@ -40,7 +39,7 @@ void checkRTC()
   
   if (isRTC == 0) 
   {
-    Serial.println("RTC not found");
+    printToSerial(LOG_LEVEL_WARN, "RTC not found");
   }
 }
 
@@ -85,7 +84,7 @@ void syncDateTimeWithSntp()
     
     is_time_set = 1;
 
-    Serial.print("Date and Time are synchronized with SNTP: "); Serial.print(tm.Hour); Serial.print(":"); Serial.println(tm.Minute);
+    printToSerial(LOG_LEVEL_DEBUG, "Date and Time are synchronized with SNTP %d:%d:%d %d.%d.%d (timestamp = %d)", tm.Hour, tm.Minute, tm.Second, tm.Day, tm.Month, tm.Year, currentTimestamp);   
   }
 }
 
@@ -172,9 +171,9 @@ void ticker()
   
   if ((msStart == 0) and (msCurrent == 0)) 
   {
-    Serial.print("msSatrt=0: ");
     msStart = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
-    Serial.println(msStart);
+    printToSerial(LOG_LEVEL_DEBUG, "msStart == 0 and msCurrent == 0 -> msStart = %d", msStart);
+    
     if (msStart > _millis)
     {
       msStart = msStart - _millis;
@@ -185,15 +184,15 @@ void ticker()
   if ((msStart == 0) and (msCurrent > 0)) 
   {
     msCurrent = (tm.Hour * 3600 + tm.Minute * 60 + tm.Second) * 1000;
-    Serial.println(msStart);
+    printToSerial(LOG_LEVEL_DEBUG, "msStart == 0 and msCurrent > 0 -> msCurrent = %d", msCurrent);
+    
     while (1) 
     {
       yield();
       if (msCurrent > _millis) 
       {
         msStart = msCurrent - _millis;
-        Serial.print("msStart rol:");
-        Serial.println(msStart);
+        printToSerial(LOG_LEVEL_DEBUG, "msStart rol: %d", msStart);
         break;
       } 
       else

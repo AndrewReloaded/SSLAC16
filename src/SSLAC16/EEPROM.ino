@@ -9,7 +9,7 @@ int readEmLight(int address)
     address++;
   }
   memcpy(emLight, _buff, sizeof emLight);
-  Serial.print("readEmligth="); Serial.println(address);
+  printToSerial(LOG_LEVEL_DEBUG, "readEmligth = %d", address);
   return address;
 }
 
@@ -37,7 +37,7 @@ int readNewAlarm(int address)
     address++;
   }
   memcpy(newAlarm, _buff, sizeof newAlarm);
-  Serial.print("NewAlarm=:"); Serial.println("address");
+  printToSerial(LOG_LEVEL_DEBUG, "NewAlarm = %d", address);
   return address;
 }
 
@@ -65,7 +65,7 @@ int readNewCh(int address)
     address++;
   }
   memcpy(newCh, _buff, sizeof newCh);
-  Serial.print("readNewCh=:"); Serial.println(address);
+  printToSerial(LOG_LEVEL_DEBUG, "readNewCh = %d", address);
   return address;
 }
 
@@ -129,7 +129,7 @@ void readAllEEPROM()
   addr++;
   
   pSDA = EEPROM.read(addr);
-  Serial.print("pSDA Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "pSDA Addr = %d", addr);
   if ((pSDA < 1) || (pSDA > 15)) 
   {
     pSDA = 4;
@@ -137,8 +137,7 @@ void readAllEEPROM()
   addr++;
   
   pSCL = EEPROM.read(addr);
-  Serial.print("pSCL Addr:"); 
-  Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "pSCL Addr = %d", addr);
   if ((pSCL < 1) || (pSCL > 15)) 
   {
     pSCL = 5;
@@ -155,7 +154,7 @@ void readAllEEPROM()
   }
   addr++;
   
-  Serial.print("Start old ch vlue:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "Start old ch vlue Addr = %d", addr);
   for (byte i = 0; i < 16; i++) 
   {
     int a = EEPROM.read(addr);
@@ -168,7 +167,7 @@ void readAllEEPROM()
     addr += 2;
   }
   addr++;
-  Serial.print("after old ch value reading Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "after old ch value reading Addr = %d", addr);
   
   for (byte i = 0; i < 16; i++) 
   {
@@ -179,7 +178,7 @@ void readAllEEPROM()
     }
     addr++;
   }
-  Serial.print("Addr old ch Inv:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "Old ch Inv Addr = %d", addr);
   
   int a = EEPROM.read(addr);
   int b = EEPROM.read(addr + 1);
@@ -189,18 +188,19 @@ void readAllEEPROM()
     pwmFreq = 1000;
   }
   addr += 2; 
-  Serial.print("pwmFreq Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "pwmFreq Addr = %d", addr);
   
   Time_Zone = EEPROM.read(addr);
-  Serial.print("TimeZone end Addr:"); Serial.println(addr);
-  Serial.print("ds18x20 start Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "TimeZone end Addr = %d", addr);
   
+  printToSerial(LOG_LEVEL_DEBUG, "ds18x20 start Addr = %d", addr);
   addr = rDS18x20(100);
-  Serial.print("DS18x20 end addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "DS18x20 end Addr = %d", addr);
+  
+  ssid_addr = EEPROM.read(447);
+  printToSerial(LOG_LEVEL_DEBUG, "ssid Addr = %d", addr);
   
   ssid = "";
-  ssid_addr = EEPROM.read(447);
-  Serial.print("ssid Addr:"); Serial.println(addr);
   if ((ssid_addr < 32) and (ssid_addr > 0)) 
   {
     for (addr = 448; addr < 448 + ssid_addr; addr++) 
@@ -210,7 +210,7 @@ void readAllEEPROM()
   }
   
   passwd_addr = EEPROM.read(479);
-  Serial.print("password Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "password Addr = %d", addr);
 
   password = "";
   if ((passwd_addr < 32) and (passwd_addr > 0)) 
@@ -222,31 +222,47 @@ void readAllEEPROM()
   }
   addr = 576;
   
-  Serial.print("Group begin Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "Group begin Addr = %d", addr);
   addr = readGroup(addr);
-  Serial.print("Group end Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "Group end Addr = %d", addr);
   
-  Serial.print("Alarm begin Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "Alarm begin Addr = %d", addr);
   addr = 864;
-  Serial.print("Alarm end Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "Alarm end Addr = %d", addr);
   
-  Serial.print("EmLight begin Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG,"EmLight begin Addr = %d", addr);
   addr = readEmLight(addr);
-  Serial.print("EmLight end Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG,"EmLight end Addr = %d", addr);
   
   addr = 1024;
   
-  Serial.print("old chanell begin schedule Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "old chanell begin schedule Addr = %d", addr);
   for (byte i = 0; i < 16; i++) 
   {
-    ch[i].Sunrise.Hour = EEPROM.read(addr); addr++; ch[i].Sunrise.Minute = EEPROM.read(addr); addr++;
-    ch[i].Day.Hour = EEPROM.read(addr); addr++; ch[i].Day.Minute = EEPROM.read(addr); addr++;
-    ch[i].Sunset.Hour = EEPROM.read(addr); addr++; ch[i].Sunset.Minute = EEPROM.read(addr); addr++;
-    ch[i].Night.Hour = EEPROM.read(addr); addr++; ch[i].Night.Minute = EEPROM.read(addr); addr++;
+    ch[i].Sunrise.Hour = EEPROM.read(addr); 
+    addr++; 
+    ch[i].Sunrise.Minute = EEPROM.read(addr); 
+    addr++;
+    
+    ch[i].Day.Hour = EEPROM.read(addr); 
+    addr++; 
+    ch[i].Day.Minute = EEPROM.read(addr); 
+    addr++;
+    
+    ch[i].Sunset.Hour = EEPROM.read(addr); 
+    addr++; 
+    ch[i].Sunset.Minute = EEPROM.read(addr); 
+    addr++;
+    
+    ch[i].Night.Hour = EEPROM.read(addr); 
+    addr++; 
+    ch[i].Night.Minute = EEPROM.read(addr); 
+    addr++;
+    
     yield();
   }
   addr++;
-  Serial.print("old chanell end schedule Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "old chanell end schedule Addr = %d", addr);
  
   for (byte j = 0; j < 16; j++) 
   {
@@ -256,9 +272,9 @@ void readAllEEPROM()
       addr++;
     }
   }
-  Serial.print("end of old ch description -:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "end of old ch description Addr = %d ", addr);
   
-  Serial.print("Sensors start Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "Sensors start Addr = %d", addr);
   for (byte j = 0; j < 8; j++) 
   {
     for (byte i = 0; i < 16; i++) 
@@ -267,9 +283,9 @@ void readAllEEPROM()
       addr++;
     }
   }
-  Serial.print("Sensors end Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "Sensors end Addr = %d", addr);
   
-  Serial.print("Start of old ch sensor -:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "Start of old ch sensor Addr = %d", addr);
   for (byte j = 0; j < 16; j++) 
   {
     for (byte i = 0; i < sizeof ch[j].ds18x20_addr; i++) 
@@ -278,10 +294,10 @@ void readAllEEPROM()
       addr++;
     }
   }
-  Serial.print("End of old ch sensor -:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "End of old ch sensor Addr = %d", addr);
   
   byte _length = EEPROM.read(addr);
-  Serial.println("\nHostname len: " + String(_length) + " at addr: " + String(addr));
+  printToSerial(LOG_LEVEL_DEBUG, "Hostname len %d at Addr = %d", _length, addr);
   for (byte j = 0; j < _length; j++) 
   {
     addr++;
@@ -299,11 +315,9 @@ void readAllEEPROM()
   addr++;
   
   isHidePassword = EEPROM.read(addr);
-  Serial.print("isHidePassword Addr:"); Serial.println(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "isHidePassword Addr = %d", addr);
   addr++;
-  
-  Serial.print("Last addr3 "); Serial.println(addr);
-  
+   
   _ver ver = readVersion();
   if (ver.minor < 36) 
   {
@@ -313,11 +327,13 @@ void readAllEEPROM()
   {
     addr = readNewCh(addr);
   }
+
+  printToSerial(LOG_LEVEL_DEBUG, "Last Addr = %d", addr);
 }
 
 void saveAllEEPROM() 
 {
-  server.send(200, text_plain, "\n\r");
+  server.send(200, text_plain, "\n\r");//Why here?
   EEPROM.begin(max_addr);
   
   int addr = 0;
@@ -453,6 +469,8 @@ void saveAllEEPROM()
   addr = saveNewCh(addr);
   
   EEPROM.commit();
+
+  printToSerial(LOG_LEVEL_DEBUG, "Write to EEPROM done");
 }
 
 void clearEEPROM() 
@@ -465,8 +483,10 @@ void clearEEPROM()
     yield();
   }
   EEPROM.commit();
+
+  printToSerial(LOG_LEVEL_DEBUG, "Clearing EEPROM done");
   
-  server.sendContent(F("EEPROM cleared"));
+  server.sendContent(F("EEPROM cleared"));//Why here?
 }
 
 void sDS18x20(int address) 
@@ -501,7 +521,7 @@ int rDS18x20(int address)
   }
   memcpy(Sensor, buff, sizeof Sensor);
   
-  Serial.print("ds1820="); Serial.println(address + sizeof Sensor);
+  printToSerial(LOG_LEVEL_DEBUG, "ds1820 = %d", address + sizeof Sensor);
   
   return address + sizeof Sensor;
 }
@@ -516,7 +536,7 @@ int readGroup (int address)
   }
   memcpy(group, _buff, sizeof group);
   
-  Serial.print("readGroup="); Serial.println(address + i);
+  printToSerial(LOG_LEVEL_DEBUG, "readGroup = %d", address + i);
   
   return address + i;
 }

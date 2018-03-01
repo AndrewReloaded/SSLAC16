@@ -60,7 +60,7 @@ void _get()
       else
       {
         byte _ch = server.arg(0).toInt();
-        //Serial.print("getting channel:");Serial.println(_ch);
+        //printToSerial(LOG_LEVEL_DEBUG, "getting channel:", _ch);
         snprintf(stream, 1024, "[\
             [%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d],\n\r\
             [%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d],\n\r\

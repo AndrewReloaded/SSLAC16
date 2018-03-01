@@ -9,7 +9,7 @@ void setupPWM()
   else 
   {
     isPCA = 0;
-    Serial.println("PCA9685 not found !!!");
+    printToSerial(LOG_LEVEL_WARN, "PCA9685 not found");
   }
   
   pwm = Adafruit_PWMServoDriver();
@@ -40,7 +40,7 @@ void dosing(byte _ch)
     if ((ct >= st) and (ct <= st + newCh[_ch].value[i])) 
     {
       On = 1;
-      //Serial.print(tm.Hour);Serial.print(":");Serial.print(tm.Minute);Serial.print(":");Serial.print(tm.Second);Serial.print(" SwitchOn CH:");Serial.println(_ch);
+      //printToSerial(LOG_LEVEL_DEBUG, "%d:%d:%d SwitchOn CH = %d", tm.Hour, tm.Minute, tm.Second, _ch);
       break;
     }
   }
@@ -49,14 +49,16 @@ void dosing(byte _ch)
   {
     newCurrent[_ch] = 4095;
     invPWM(_ch, newCurrent[_ch]);
-    Serial.print(tm.Hour); Serial.print(":"); Serial.print(tm.Minute); Serial.print(":"); Serial.print(tm.Second); Serial.print(" SwitchOn CH:"); Serial.println(_ch);
+    
+    printToSerial(LOG_LEVEL_DEBUG, "%d:%d:%d SwitchOn CH = %d", tm.Hour, tm.Minute, tm.Second, _ch);
   }
   
   if ((On == 0) and (newCurrent[_ch] != 0)) 
   {
     newCurrent[_ch] = 0;
     invPWM(_ch, newCurrent[_ch]);
-    Serial.print(tm.Hour); Serial.print(":"); Serial.print(tm.Minute); Serial.print(":"); Serial.print(tm.Second); Serial.print(" SwitchOff CH:"); Serial.println(_ch);
+    
+    printToSerial(LOG_LEVEL_DEBUG, "%d:%d:%d SwitchOff CH = %d", tm.Hour, tm.Minute, tm.Second, _ch);
   }
 }
 

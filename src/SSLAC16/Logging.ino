@@ -1,17 +1,12 @@
-const byte LOG_LEVEL_INFO = 0;
-const byte LOG_LEVEL_DEBUG = 1;
-const byte LOG_LEVEL_WARN = 2;
-
-void writeToSerial(const byte level, const char *format, ...)
+void printToSerial(const byte level, const char *format, ...)
 {
-  int count;
   va_list argv;
-  va_start(argv, count);
+  va_start(argv, format);
 
   //TODO: add levels
   
-  snprintf(stream, 1024, format, argv);
-  Serial.print(stream);
+  vsprintf(stream, format, argv);
+  Serial.println(stream);
 
   va_end(argv);
 }

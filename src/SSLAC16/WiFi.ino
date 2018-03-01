@@ -39,9 +39,7 @@ void connectWiFi()
 
   if(isConn)
   {
-    Serial.println("WiFi connected");
-    Serial.print(F("WiFi IP address: "));
-    Serial.println(WiFi.localIP());
+    printToSerial(LOG_LEVEL_INFO, "WiFi connected. IP adress: %s", WiFi.localIP().toString().c_str());
   }
 }
 
@@ -94,9 +92,8 @@ void startSoftAP()
   }
 
   WiFi.softAP(SSID_AP.c_str(), PASSWORD_AP.c_str());
-  Serial.print(F("Starting soft AP: ")); Serial.print(SSID_AP); Serial.print("/"); Serial.println(PASSWORD_AP);
-  Serial.print(F("AP IP address: "));
-  Serial.println(WiFi.softAPIP());
+
+  printToSerial(LOG_LEVEL_INFO, "Soft AP started: %s / %s. IP address: %s", SSID_AP.c_str(), PASSWORD_AP.c_str(), WiFi.softAPIP().toString().c_str());
 }
 
 

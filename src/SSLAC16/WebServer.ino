@@ -45,7 +45,7 @@ void setupWebServer()
         server.serveStatic(dir.fileName().c_str(), SPIFFS, dir.fileName().c_str());
       }
 
-      Serial.print(F("HTTP server serving file: ")); Serial.print(dir.fileName()); Serial.print(F(", size: ")); Serial.println(dir.fileSize());
+      printToSerial(LOG_LEVEL_DEBUG, "HTTP server serving file: %s size %d", dir.fileName().c_str(), dir.fileSize());
     }
   }
 }
@@ -60,8 +60,8 @@ void handleNotFound()
   String _resp = "Not found " + server.uri() + "\n";
   for (byte i = 0; i < server.args(); i++) 
   {
-    Serial.print("arg("); Serial.print(i); Serial.print(") - ");
-    Serial.println(server.argName(i) + " : " + server.arg(i));
+    printToSerial(LOG_LEVEL_DEBUG, "arg(%d) <%s> = %s", i, server.argName(i).c_str(), server.arg(i).c_str());
+
   }
   
   server.send(404, text_plain, _resp);

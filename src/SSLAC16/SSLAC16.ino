@@ -16,8 +16,9 @@ extern "C" {
 
 //TODO: rename variables
 
-#define TEMPERATURE_PRECISION 9
-#define USE_SERIAL Serial
+#define LOG_LEVEL_INFO  0
+#define LOG_LEVEL_DEBUG 1
+#define LOG_LEVEL_WARN  2
 
 typedef struct _ver
 {
@@ -144,44 +145,39 @@ tmElements_t tm;
 void setup(void) 
 {
   delay(5000);
-  Serial.begin(115200);
+  Serial.begin(115200); 
+  Serial.println();
+
+  printToSerial(LOG_LEVEL_INFO, "SSLAC16 ver %d.%d.%d build %s %s", currentVersion.major, currentVersion.minor, currentVersion.rel, __DATE__, __TIME__);
   
-  Serial.println("");
-  Serial.println("SSLAC16 ver" + String(currentVersion.major) + "." + String(currentVersion.minor) + "." + String(currentVersion.rel));
-  Serial.print("Build: ");
-  Serial.print(__DATE__);
-  Serial.print(" ");
-  Serial.println(__TIME__);
-  
-  Serial.println("Start setup");
+  printToSerial(LOG_LEVEL_INFO, "Start setup");
 
   SPIFFS.begin();
-  delay(200);//Why?
-  Serial.println(">> SPIFFS.begin done");
+  printToSerial(LOG_LEVEL_INFO, "SPIFFS.begin done");
 
   readAllEEPROM();
-  Serial.println(">> readAllEEPROM done");
+  printToSerial(LOG_LEVEL_INFO, "readAllEEPROM done");
 
   setupWiFi();
-  Serial.println(">> setupWiFi done");
+  printToSerial(LOG_LEVEL_INFO, "setupWiFi done");
 
   setupWebServer();
-  Serial.println(">> setupWebServer done");
+  printToSerial(LOG_LEVEL_INFO, "setupWebServer done");
 
   Wire.begin(pSDA, pSCL);
   delay(1000);//Why?
-  Serial.println(">> Wire.begin done");
+  printToSerial(LOG_LEVEL_INFO, "Wire.begin done");
 
   setupDateTime();
-  Serial.println(">> setupDateTime done");
+  printToSerial(LOG_LEVEL_INFO, "setupDateTime done");
   
   setupDS18x20();
-  Serial.println(">> setupDS18x20 done");
+  printToSerial(LOG_LEVEL_INFO, "setupDS18x20 done");
 
   setupPWM();
-  Serial.println(">> setupPWM done");
+  printToSerial(LOG_LEVEL_INFO, "setupPWM done");
 
-  Serial.println("Setup complete");
+  printToSerial(LOG_LEVEL_INFO, "Setup complete");
 }
 
 void loop(void) 
