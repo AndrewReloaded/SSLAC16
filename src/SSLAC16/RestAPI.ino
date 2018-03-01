@@ -17,6 +17,7 @@ void _get()
                newAlarm[4].index, newAlarm[4].temp, newAlarm[5].index, newAlarm[5].temp, newAlarm[6].index, newAlarm[6].temp, newAlarm[7].index, newAlarm[7].temp, \
                newAlarm[8].index, newAlarm[8].temp, newAlarm[9].index, newAlarm[9].temp, newAlarm[10].index, newAlarm[10].temp, newAlarm[11].index, newAlarm[11].temp, \
                newAlarm[12].index, newAlarm[12].temp, newAlarm[13].index, newAlarm[13].temp, newAlarm[14].index, newAlarm[14].temp, newAlarm[15].index, newAlarm[15].temp);
+               
       server.send(200, text_json, stream);
       return;
     }
@@ -26,6 +27,7 @@ void _get()
       snprintf(stream, 1024, "[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]\n\r", \
                emLight[0], emLight[1], emLight[2], emLight[3], emLight[4], emLight[5], emLight[6], emLight[7], \
                emLight[8], emLight[9], emLight[10], emLight[11], emLight[12], emLight[13], emLight[14], emLight[15]);
+               
       server.send(200, text_json, stream);
       return;
     }
@@ -37,6 +39,7 @@ void _get()
         snprintf(stream, 1024, "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"]\n\r", \
                  newCh[0].name, newCh[1].name, newCh[2].name, newCh[3].name, newCh[4].name, newCh[5].name, newCh[6].name, newCh[7].name, \
                  newCh[8].name, newCh[9].name, newCh[10].name, newCh[11].name, newCh[12].name, newCh[13].name, newCh[14].name, newCh[15].name);
+                 
         server.send(200, text_json, stream);
         return;
       }
@@ -45,6 +48,7 @@ void _get()
         snprintf(stream, 1024, "[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]\n\r", \
                  newCurrent[0], newCurrent[1], newCurrent[2], newCurrent[3], newCurrent[4], newCurrent[5], newCurrent[6], newCurrent[7],
                  newCurrent[8], newCurrent[9], newCurrent[10], newCurrent[11], newCurrent[12], newCurrent[13], newCurrent[14], newCurrent[15]);
+                 
         server.send(200, text_json, stream);
         return;
       }
@@ -52,7 +56,6 @@ void _get()
       {
         server.send(200, text_json, "[]");
         return;
-
       } 
       else
       {
@@ -83,6 +86,7 @@ void _get()
                  newCh[_ch].type, \
                  newCh[_ch].Inv, \
                  newCh[_ch].name);
+                 
         server.send(200, text_json, stream);
         return;
       }
@@ -92,9 +96,9 @@ void _get()
     {
       if (server.arg(0) == "disconnect") 
       {
+        disconnectWiFi();
+        
         server.send(200, text_plain, F("\n\r"));
-        WiFi.disconnect();
-        isConn = 0;
         return;
       }
       
@@ -157,6 +161,7 @@ void _get()
                  //TODO: remove tAlarm
                  "isAlarm", "tAlarm.index", "tAlarm.temp", "tAlarm.step", \
                  0, 0, 0, 0, isHidePassword);
+                 
         server.send(200, text_json, stream);
         return;
       }
@@ -176,6 +181,7 @@ void _get()
                  Time_Zone, \
                  newCurrent[0], newCurrent[1], newCurrent[2], newCurrent[3], newCurrent[4], newCurrent[5], newCurrent[6], newCurrent[7], \
                  newCurrent[8], newCurrent[9], newCurrent[10], newCurrent[11], newCurrent[12], newCurrent[13], newCurrent[14], newCurrent[15]);
+                 
         server.send(200, text_json, stream);
         return;
       }
@@ -190,6 +196,7 @@ void _get()
                  tm.Hour, tm.Minute, tm.Second, Time_Zone, \
                  pSDA, pSCL, pwmFreq, \
                  esp_hostname.c_str(), WiFi.localIP().toString().c_str(), ssid.c_str(), WiFi.softAPIP().toString().c_str(), foundedNet, isConn, cSensor);
+                 
         server.send(200, text_json, stream);
         return;
       }
@@ -206,8 +213,8 @@ void _get()
     if (server.argName(0) == "version") 
     {
       snprintf(stream, 1024, "[\"%s\",%d,%d,%d,\"%s\",\"%s\"]", \
-               "SSLAC16", version[0], version[1], version[2], __DATE__, __TIME__);
-      //Serial.println(stream);
+               "SSLAC16", currentVersion.major, currentVersion.minor, currentVersion.rel, __DATE__, __TIME__);
+
       server.send(200, text_json, stream);
       return;
     }
@@ -226,6 +233,7 @@ void _get()
                  _millis / 60000 % 60, \
                  _millis / 1000 % 60, \
                  Time_Zone);
+                 
         server.send(200, text_json, stream);
         return;
       }
@@ -253,6 +261,7 @@ void _get()
                  int(Sensor[value].Temp * 1000), \
                  Sensor[value].Desc);
       }
+      
       server.send(200, text_json, stream);
       return;
     }
@@ -279,8 +288,8 @@ void _get()
                  group[0].step, group[1].step, group[2].step, group[3].step, group[4].step, group[5].step, group[6].step, group[7].step, \
                  group[0].isAlarm, group[1].isAlarm, group[2].isAlarm, group[3].isAlarm, group[4].isAlarm, group[5].isAlarm, group[6].isAlarm, group[7].isAlarm\
                 );
+                
         server.send(200, text_json, stream);
-
         return;
       }
     }
@@ -494,9 +503,18 @@ void _set()
       
       for (byte i = 1; i < server.args(); i++) 
       {
-        if (server.argName(i) == "index") newAlarm[_ch].index = server.arg(i).toInt();
-        if (server.argName(i) == "temp") newAlarm[_ch].temp = server.arg(i).toInt();
-        if (server.argName(i) == "step") newAlarm[_ch].step = server.arg(i).toInt();
+        if (server.argName(i) == "index")
+        {
+          newAlarm[_ch].index = server.arg(i).toInt();
+        }
+        if (server.argName(i) == "temp")
+        {
+          newAlarm[_ch].temp = server.arg(i).toInt();
+        }
+        if (server.argName(i) == "step") 
+        {
+          newAlarm[_ch].step = server.arg(i).toInt();
+        }
       }
     }
     
@@ -532,6 +550,7 @@ void _set()
       newCh[_ch].type = server.arg(1).toInt();
       return;
     }
+    
     if (server.argName(0) == "invN") {
       byte _ch = server.arg(0).toInt();
       newCh[_ch].Inv = server.arg(1).toInt();
@@ -550,9 +569,18 @@ void _set()
       byte _ch = server.arg(0).toInt();
       for (byte i = 1; i < server.args(); i++) 
       {
-        if (server.argName(i) == "alarmIndex") group[_ch].alarmIndex = server.arg(i).toInt();
-        if (server.argName(i) == "temp") group[_ch].temp = server.arg(i).toInt();
-        if (server.argName(i) == "step") group[_ch].step = server.arg(i).toInt();
+        if (server.argName(i) == "alarmIndex") 
+        {
+          group[_ch].alarmIndex = server.arg(i).toInt();
+        }
+        if (server.argName(i) == "temp") 
+        {
+          group[_ch].temp = server.arg(i).toInt();
+        }
+        if (server.argName(i) == "step") 
+        {
+          group[_ch].step = server.arg(i).toInt();
+        }
       }
       return;
     }
@@ -594,7 +622,6 @@ void _set()
           newCh[_ch].value[server.argName(i).toInt()] = _value;
           newCurrent[_ch] = _value;
           invPWM(_ch, newCurrent[_ch]);
-
         }
       }
       else 

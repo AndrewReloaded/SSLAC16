@@ -5,7 +5,7 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <EEPROM.h>
-#include <Time.h>
+#include <TimeLib.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <FS.h>
@@ -19,7 +19,13 @@ extern "C" {
 #define TEMPERATURE_PRECISION 9
 #define USE_SERIAL Serial
 
-byte version[3] = {0, 36, 1};
+typedef struct _ver
+{
+  byte major = 0;
+  byte minor = 37;
+  byte rel = 0;
+}; 
+const _ver currentVersion;
 
 typedef struct _shed 
 {
@@ -141,7 +147,7 @@ void setup(void)
   Serial.begin(115200);
   
   Serial.println("");
-  Serial.println("SSLAC16 ver" + String(version[0]) + "." + String(version[1]) + "rev" + String(version[2]));
+  Serial.println("SSLAC16 ver" + String(currentVersion.major) + "." + String(currentVersion.minor) + "." + String(currentVersion.rel));
   Serial.print("Build: ");
   Serial.print(__DATE__);
   Serial.print(" ");

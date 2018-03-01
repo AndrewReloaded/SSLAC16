@@ -18,17 +18,20 @@ void connectWiFi()
 {
   //ssid = "home";
   //password = "";
-  
-  WiFi.begin(ssid.c_str(), password.c_str());
 
-  int tmp_a = 0;
-  while (WiFi.status() != WL_CONNECTED) 
-  {
-    delay(500);
-    tmp_a++;
-    if (tmp_a > 128) 
+  if(ssid != "")
+  {   
+    WiFi.begin(ssid.c_str(), password.c_str());
+  
+    int tmp_a = 0;
+    while (WiFi.status() != WL_CONNECTED) 
     {
-      break;
+      delay(500);
+      tmp_a++;
+      if (tmp_a > 128) 
+      {
+        break;
+      }
     }
   }
   
@@ -47,6 +50,16 @@ void reconnectWiFi()
   WiFi.disconnect(true);
   
   connectWiFi();
+}
+
+void disconnectWiFi()
+{
+  WiFi.disconnect(true);
+
+  ssid = "";
+  password = "";
+
+  isConn = 0;
 }
 
 void startSoftAP() 

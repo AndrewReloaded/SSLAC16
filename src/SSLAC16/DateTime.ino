@@ -4,7 +4,8 @@
 void setupDateTime()
 {
   _millis = millis();
-  configTime((Time_Zone - 127) * 360, 0, "pool.ntp.org", "time.nist.gov");
+  //configTime((Time_Zone - 127) * 360, 0, "pool.ntp.org", "time.nist.gov");
+  configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
   
   checkRTC();
   

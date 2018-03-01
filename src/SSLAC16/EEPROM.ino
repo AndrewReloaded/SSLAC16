@@ -86,16 +86,20 @@ int saveNewCh(int address)
   return address;
 }
 
-void readVersion() {
-  version[0] = EEPROM.read(4093);
-  version[1] = EEPROM.read(4094);
-  version[2] = EEPROM.read(4095);
+_ver readVersion() 
+{
+  _ver ver;
+  ver.major = EEPROM.read(4093);
+  ver.minor = EEPROM.read(4094);
+  ver.rel   = EEPROM.read(4095);
+  return ver;
 }
 
 void saveVersion() 
 {
-  //FEXME: why only one number?
-  EEPROM.write(4094, version[1]);
+  EEPROM.write(4093, currentVersion.major);
+  EEPROM.write(4093, currentVersion.minor);
+  EEPROM.write(4093, currentVersion.rel);
 }
 
 void readAllEEPROM() 
@@ -299,12 +303,11 @@ void readAllEEPROM()
   addr++;
   
   Serial.print("Last addr3 "); Serial.println(addr);
-  readVersion();
   
-  if (version[1] < 36) 
+  _ver ver = readVersion();
+  if (ver.minor < 36) 
   {
     convertPWM();
-    version[1] = 36;
   } 
   else 
   {
