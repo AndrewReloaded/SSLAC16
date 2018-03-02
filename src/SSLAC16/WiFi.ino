@@ -30,7 +30,7 @@ void connectWiFi()
     {
       delay(500);
       tmp_a++;
-      if (tmp_a > 128) 
+      if (tmp_a > MAX_RETRAY_COUNT) 
       {
         break;
       }

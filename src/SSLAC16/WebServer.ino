@@ -12,7 +12,7 @@ void setupWebServer()
   
   server.begin();
   
-  for (byte i = 0; i < 32; i++) 
+  for (byte i = 0; i < MAX_RETRAY_COUNT; i++) 
   {
     if (MDNS.begin(esp_hostname.c_str())) 
     {
@@ -56,7 +56,7 @@ void handleNotFound()
 {
   if (server.uri().endsWith(".pdf")) 
   {
-    server.send(404, text_plain, F("May be You are using 512k module\n\rIn this case no room for manual, sorry."));
+    server.send(404, TEXT_PLAIN, F("May be You are using 512k module\n\rIn this case no room for manual, sorry."));
   }
   
   String _resp = "Not found " + server.uri() + "\n";
@@ -66,7 +66,7 @@ void handleNotFound()
 
   }
   
-  server.send(404, text_plain, _resp);
+  server.send(404, TEXT_PLAIN, _resp);
 }
 
 void handleReboot() 
@@ -81,7 +81,7 @@ void handleSv()
 
 void handleRescue()
 {
-  server.send(200, text_html, F("<form method=\"POST\" action=\"/upload\" enctype=\"multipart/form-data\"> <input\
+  server.send(200, TEXT_HTML, F("<form method=\"POST\" action=\"/upload\" enctype=\"multipart/form-data\"> <input\
         name=\"myfile1\" size=\"20\" lang=\"en\" type=\"file\"> <input value=\"Upload\" type=\"submit\"></form>"));
 }
 
@@ -190,18 +190,18 @@ void handleUpload()
   server.sendHeader("Connection", "close");
   if (isFirmware || isSPIFFS) 
   {
-    server.send(200,  text_html, F("<meta http-equiv=\"refresh\" content=\"0; URL='/reboot'\" />\n\r<script>alert('Need to reboot');</script>"));
+    server.send(200,  TEXT_HTML, F("<meta http-equiv=\"refresh\" content=\"0; URL='/reboot'\" />\n\r<script>alert('Need to reboot');</script>"));
     ESP.reset();
   } 
   else 
   {
-    server.send(200,  text_html, F("<meta http-equiv=\"refresh\" content=\"0; URL='/'\" />\n\r<script>alert('File uploaded');</script>"));
+    server.send(200,  TEXT_HTML, F("<meta http-equiv=\"refresh\" content=\"0; URL='/'\" />\n\r<script>alert('File uploaded');</script>"));
   }
 }
 
 void reboot()
 {
-  server.send(200, text_plain, F("You are crazy !!!"));
+  server.send(200, TEXT_PLAIN, F("You are crazy !!!"));
   ESP.reset();
 }
 

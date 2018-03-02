@@ -16,12 +16,17 @@ extern "C" {
 
 //TODO: rename variables
 
+#define MAX_RETRAY_COUNT 8
 
 #define LOG_LEVEL_DEBUG 0
 #define LOG_LEVEL_INFO  1
 #define LOG_LEVEL_WARN  2
 
 #define MASTER_LOG_LEVEL LOG_LEVEL_INFO
+
+#define TEXT_HTML  "text/html"
+#define TEXT_PLAIN "text/plain"
+#define TEXT_JSON  "text/json"
 
 typedef struct _ver
 {
@@ -99,11 +104,6 @@ const int max_addr = 4096;
 byte playTime = 255;
 
 ESP8266WebServer server(80);
-const String text_html = "text/html";
-const String text_plain = "text/plain";
-const String text_json = "text/json";
-const String htm = ".htm";
-const String html = ".html";
 char stream[1024];
 bool isFirmware = false;
 bool isSPIFFS = false;

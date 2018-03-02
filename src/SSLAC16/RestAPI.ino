@@ -18,7 +18,7 @@ void _get()
                newAlarm[8].index, newAlarm[8].temp, newAlarm[9].index, newAlarm[9].temp, newAlarm[10].index, newAlarm[10].temp, newAlarm[11].index, newAlarm[11].temp, \
                newAlarm[12].index, newAlarm[12].temp, newAlarm[13].index, newAlarm[13].temp, newAlarm[14].index, newAlarm[14].temp, newAlarm[15].index, newAlarm[15].temp);
                
-      server.send(200, text_json, stream);
+      server.send(200, TEXT_JSON, stream);
       return;
     }
 
@@ -28,7 +28,7 @@ void _get()
                emLight[0], emLight[1], emLight[2], emLight[3], emLight[4], emLight[5], emLight[6], emLight[7], \
                emLight[8], emLight[9], emLight[10], emLight[11], emLight[12], emLight[13], emLight[14], emLight[15]);
                
-      server.send(200, text_json, stream);
+      server.send(200, TEXT_JSON, stream);
       return;
     }
     
@@ -40,7 +40,7 @@ void _get()
                  newCh[0].name, newCh[1].name, newCh[2].name, newCh[3].name, newCh[4].name, newCh[5].name, newCh[6].name, newCh[7].name, \
                  newCh[8].name, newCh[9].name, newCh[10].name, newCh[11].name, newCh[12].name, newCh[13].name, newCh[14].name, newCh[15].name);
                  
-        server.send(200, text_json, stream);
+        server.send(200, TEXT_JSON, stream);
         return;
       }
       if (server.arg(0) == "current") 
@@ -49,12 +49,12 @@ void _get()
                  newCurrent[0], newCurrent[1], newCurrent[2], newCurrent[3], newCurrent[4], newCurrent[5], newCurrent[6], newCurrent[7],
                  newCurrent[8], newCurrent[9], newCurrent[10], newCurrent[11], newCurrent[12], newCurrent[13], newCurrent[14], newCurrent[15]);
                  
-        server.send(200, text_json, stream);
+        server.send(200, TEXT_JSON, stream);
         return;
       }
       if ((server.arg(0) == "All") or (server.arg(0) == "")) 
       {
-        server.send(200, text_json, "[]");
+        server.send(200, TEXT_JSON, "[]");
         return;
       } 
       else
@@ -87,7 +87,7 @@ void _get()
                  newCh[_ch].Inv, \
                  newCh[_ch].name);
                  
-        server.send(200, text_json, stream);
+        server.send(200, TEXT_JSON, stream);
         return;
       }
     }
@@ -98,7 +98,7 @@ void _get()
       {
         disconnectWiFi();
         
-        server.send(200, text_plain, F("\n\r"));
+        server.send(200, TEXT_PLAIN, F("\n\r"));
         return;
       }
       
@@ -118,13 +118,13 @@ void _get()
                  WiFi.isHidden(server.arg(0).toInt()));
       }
       
-      server.send(200, text_json, stream);
+      server.send(200, TEXT_JSON, stream);
       return;
     }
     
     if ((server.argName(0) == "ssid") and (server.arg(0) == "") and (isConn == 1)) 
     {
-      server.send(200, text_json, "[\"" + ssid + "\"]\n\r");
+      server.send(200, TEXT_JSON, "[\"" + ssid + "\"]\n\r");
       return;
     }
     
@@ -162,7 +162,7 @@ void _get()
                  "isAlarm", "tAlarm.index", "tAlarm.temp", "tAlarm.step", \
                  0, 0, 0, 0, isHidePassword);
                  
-        server.send(200, text_json, stream);
+        server.send(200, TEXT_JSON, stream);
         return;
       }
       
@@ -182,7 +182,7 @@ void _get()
                  newCurrent[0], newCurrent[1], newCurrent[2], newCurrent[3], newCurrent[4], newCurrent[5], newCurrent[6], newCurrent[7], \
                  newCurrent[8], newCurrent[9], newCurrent[10], newCurrent[11], newCurrent[12], newCurrent[13], newCurrent[14], newCurrent[15]);
                  
-        server.send(200, text_json, stream);
+        server.send(200, TEXT_JSON, stream);
         return;
       }
       
@@ -197,7 +197,7 @@ void _get()
                  pSDA, pSCL, pwmFreq, \
                  esp_hostname.c_str(), WiFi.localIP().toString().c_str(), ssid.c_str(), WiFi.softAPIP().toString().c_str(), foundedNet, isConn, cSensor);
                  
-        server.send(200, text_json, stream);
+        server.send(200, TEXT_JSON, stream);
         return;
       }
     }
@@ -206,7 +206,7 @@ void _get()
     if (server.argName(0) == "alarm") 
     {
       snprintf(stream, 1024, "[%d,%d,%d]\n\r", 0, 0, 0);
-      server.send(200, text_json, stream);
+      server.send(200, TEXT_JSON, stream);
       return;
     }
     
@@ -215,7 +215,7 @@ void _get()
       snprintf(stream, 1024, "[\"%s\",%d,%d,%d,\"%s\",\"%s\"]", \
                "SSLAC16", currentVersion.major, currentVersion.minor, currentVersion.rel, __DATE__, __TIME__);
 
-      server.send(200, text_json, stream);
+      server.send(200, TEXT_JSON, stream);
       return;
     }
     
@@ -234,7 +234,7 @@ void _get()
                  _millis / 1000 % 60, \
                  Time_Zone);
                  
-        server.send(200, text_json, stream);
+        server.send(200, TEXT_JSON, stream);
         return;
       }
     }
@@ -262,7 +262,7 @@ void _get()
                  Sensor[value].Desc);
       }
       
-      server.send(200, text_json, stream);
+      server.send(200, TEXT_JSON, stream);
       return;
     }
     
@@ -289,7 +289,7 @@ void _get()
                  group[0].isAlarm, group[1].isAlarm, group[2].isAlarm, group[3].isAlarm, group[4].isAlarm, group[5].isAlarm, group[6].isAlarm, group[7].isAlarm\
                 );
                 
-        server.send(200, text_json, stream);
+        server.send(200, TEXT_JSON, stream);
         return;
       }
     }
@@ -302,7 +302,7 @@ void _set()
   int value;
   if (server.method() == HTTP_POST) 
   {
-    server.send(200, text_plain, F("\n\r"));
+    server.send(200, TEXT_PLAIN, F("\n\r"));
 
     if ((server.argName(0) == "ssid") and (server.argName(1) == "passwd")) 
     {
@@ -333,7 +333,7 @@ void _set()
   
   if (server.method() == HTTP_GET) 
   {
-    server.send(200, text_plain, F("\n\r"));
+    server.send(200, TEXT_PLAIN, F("\n\r"));
     if (server.argName(0) == "GPIO") 
     {
       return;

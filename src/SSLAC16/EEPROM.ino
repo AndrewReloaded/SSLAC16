@@ -335,7 +335,7 @@ void readAllEEPROM()
 
 void saveAllEEPROM() 
 {
-  server.send(200, text_plain, "\n\r");//Why here?
+  server.send(200, TEXT_PLAIN, "\n\r");//Why here?
   EEPROM.begin(max_addr);
   
   int addr = 0;
