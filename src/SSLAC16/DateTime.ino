@@ -24,7 +24,6 @@ void setupTimeZone()
   configTime(Time_Zone * 3600, 0, "pool.ntp.org", "time.nist.gov");
 }
 
-
 void checkRTC() 
 {
   isRTC = 0;
@@ -93,7 +92,11 @@ void syncDateTimeWithSntp()
     
     is_time_set = 1;
 
-    printToSerial(LOG_LEVEL_DEBUG, "Date and Time are synchronized with SNTP %d:%d:%d %d.%d.%d (timestamp = %d)", tm.Hour, tm.Minute, tm.Second, tm.Day, tm.Month, tm.Year, currentTimestamp);   
+    printToSerial(LOG_LEVEL_INFO, "Date and Time are synchronized with SNTP %d:%d:%d %d.%d.%d (timestamp = %d)", tm.Hour, tm.Minute, tm.Second, tm.Day, tm.Month, tm.Year, currentTimestamp);   
+  }
+  else
+  {
+    printToSerial(LOG_LEVEL_WARN, "Date and Time are not synchronized with SNTP");
   }
 }
 

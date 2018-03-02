@@ -16,9 +16,12 @@ extern "C" {
 
 //TODO: rename variables
 
-#define LOG_LEVEL_INFO  0
-#define LOG_LEVEL_DEBUG 1
+
+#define LOG_LEVEL_DEBUG 0
+#define LOG_LEVEL_INFO  1
 #define LOG_LEVEL_WARN  2
+
+#define MASTER_LOG_LEVEL LOG_LEVEL_INFO
 
 typedef struct _ver
 {
@@ -136,7 +139,7 @@ bool isConn = false;
 
 //TODO: rename isRTC to RTCType
 byte isRTC = 0; // 0 - no RTC, 1 - DS1307, 2 - PCF8563
-byte Time_Zone;
+byte Time_Zone = 3;
 byte is_time_set = 1;
 unsigned long msCurrent = 0;
 unsigned long msStart = 0;
