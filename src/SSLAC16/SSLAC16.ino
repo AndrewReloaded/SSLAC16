@@ -148,36 +148,32 @@ void setup(void)
   Serial.begin(115200); 
   Serial.println();
 
-  printToSerial(LOG_LEVEL_INFO, "SSLAC16 ver %d.%d.%d build %s %s", currentVersion.major, currentVersion.minor, currentVersion.rel, __DATE__, __TIME__);
-  
+  printToSerial(LOG_LEVEL_INFO, "SSLAC16 ver %d.%d.%d build %s %s", currentVersion.major, currentVersion.minor, currentVersion.rel, __DATE__, __TIME__);  
   printToSerial(LOG_LEVEL_INFO, "Start setup");
 
-  SPIFFS.begin();
-  printToSerial(LOG_LEVEL_INFO, "SPIFFS.begin done");
-
+  setupTimeZone();
+  initSPIFFS();
   readAllEEPROM();
-  printToSerial(LOG_LEVEL_INFO, "readAllEEPROM done");
-
   setupWiFi();
-  printToSerial(LOG_LEVEL_INFO, "setupWiFi done");
-
   setupWebServer();
-  printToSerial(LOG_LEVEL_INFO, "setupWebServer done");
-
-  Wire.begin(pSDA, pSCL);
-  delay(1000);//Why?
-  printToSerial(LOG_LEVEL_INFO, "Wire.begin done");
-
+  setupWire();
   setupDateTime();
-  printToSerial(LOG_LEVEL_INFO, "setupDateTime done");
-  
   setupDS18x20();
-  printToSerial(LOG_LEVEL_INFO, "setupDS18x20 done");
-
   setupPWM();
-  printToSerial(LOG_LEVEL_INFO, "setupPWM done");
 
   printToSerial(LOG_LEVEL_INFO, "Setup complete");
+}
+
+void initSPIFFS()
+{
+  SPIFFS.begin();
+  printToSerial(LOG_LEVEL_INFO, "SPIFFS initialization done");
+}
+
+void setupWire()
+{
+  Wire.begin(pSDA, pSCL);
+  printToSerial(LOG_LEVEL_INFO, "Wire initialization done");
 }
 
 void loop(void) 

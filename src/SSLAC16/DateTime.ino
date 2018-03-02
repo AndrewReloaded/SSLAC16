@@ -4,17 +4,26 @@
 void setupDateTime()
 {
   _millis = millis();
-  configTime(Time_Zone * 3600, 0, "pool.ntp.org", "time.nist.gov");
-  
+ 
   checkRTC();
-  
-  getRTCDateTime();
-  
+ 
   if (isConn) 
   {   
     syncDateTimeWithSntp();
   }
+  else
+  {
+    getRTCDateTime();
+  }
+
+  printToSerial(LOG_LEVEL_INFO, "Date and Time setup done");
 }
+
+void setupTimeZone()
+{
+  configTime(Time_Zone * 3600, 0, "pool.ntp.org", "time.nist.gov");
+}
+
 
 void checkRTC() 
 {

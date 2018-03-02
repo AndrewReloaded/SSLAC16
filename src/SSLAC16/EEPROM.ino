@@ -329,6 +329,8 @@ void readAllEEPROM()
   }
 
   printToSerial(LOG_LEVEL_DEBUG, "Last Addr = %d", addr);
+
+  printToSerial(LOG_LEVEL_INFO, "EEPROM read done");
 }
 
 void saveAllEEPROM() 
@@ -470,7 +472,7 @@ void saveAllEEPROM()
   
   EEPROM.commit();
 
-  printToSerial(LOG_LEVEL_DEBUG, "Write to EEPROM done");
+  printToSerial(LOG_LEVEL_INFO, "Write to EEPROM done");
 }
 
 void clearEEPROM() 
@@ -484,7 +486,7 @@ void clearEEPROM()
   }
   EEPROM.commit();
 
-  printToSerial(LOG_LEVEL_DEBUG, "Clearing EEPROM done");
+  printToSerial(LOG_LEVEL_INFO, "Clearing EEPROM done");
   
   server.sendContent(F("EEPROM cleared"));//Why here?
 }

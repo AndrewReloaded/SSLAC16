@@ -48,6 +48,8 @@ void setupWebServer()
       printToSerial(LOG_LEVEL_DEBUG, "HTTP server serving file: %s size %d", dir.fileName().c_str(), dir.fileSize());
     }
   }
+
+  printToSerial(LOG_LEVEL_INFO, "Web Server setup done");
 }
 
 void handleNotFound() 

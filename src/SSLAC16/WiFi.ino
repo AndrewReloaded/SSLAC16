@@ -11,7 +11,9 @@ void setupWiFi()
   
   WiFi.mode(WIFI_AP_STA);
   
-  connectWiFi();  
+  connectWiFi();
+
+  printToSerial(LOG_LEVEL_INFO, "WiFi setup done");
 }
 
 void connectWiFi()

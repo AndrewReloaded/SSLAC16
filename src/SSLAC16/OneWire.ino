@@ -47,6 +47,8 @@ void scanDS18x20()
       }
     }
   }
+
+  printToSerial(LOG_LEVEL_INFO, "DS18x20 setup done");
 }
 
 void clearDS18x20() 

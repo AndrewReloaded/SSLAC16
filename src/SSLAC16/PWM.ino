@@ -25,6 +25,8 @@ void setupPWM()
       invPWM(i, newCurrent[i]);
     }
   }
+
+  printToSerial(LOG_LEVEL_INFO, "PWM setup done");
 }
 
 void dosing(byte _ch)
