@@ -110,8 +110,8 @@ _ver readVersion()
 void saveVersion() 
 {
   EEPROM.write(4093, currentVersion.major);
-  EEPROM.write(4093, currentVersion.minor);
-  EEPROM.write(4093, currentVersion.rel);
+  EEPROM.write(4094, currentVersion.minor);
+  EEPROM.write(4095, currentVersion.rel);
 }
 
 void readAllEEPROM() 
