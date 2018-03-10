@@ -1,15 +1,4 @@
-byte readByte(int &addr)
-{
-  byte res = EEPROM.read(addr);
-  addr++;
-  return res;  
-}
-
-void writeByte(int &addr, byte val)
-{
-  EEPROM.write(addr, val);
-  addr++;
-}
+//TODO: EEPROM.ino needs to be refactored 
 
 int readEmLight(int address) 
 {

@@ -14,8 +14,6 @@ extern "C" {
 #include <sntp.h>
 }
 
-//TODO: rename variables
-
 #define MAX_RETRAY_COUNT 8
 
 #define LOG_LEVEL_DEBUG 0
