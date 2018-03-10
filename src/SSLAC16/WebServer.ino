@@ -14,7 +14,7 @@ void setupWebServer()
   
   for (byte i = 0; i < MAX_RETRAY_COUNT; i++) 
   {
-    if (MDNS.begin(esp_hostname.c_str())) 
+    if (MDNS.begin(espHostname.c_str())) 
     {
       MDNS.addService("http", "tcp", 80);
       break;

@@ -1,3 +1,15 @@
+byte readByte(int &addr)
+{
+  byte res = EEPROM.read(addr);
+  addr++;
+  return res;  
+}
+
+void writeByte(int &addr, byte val)
+{
+  EEPROM.write(addr, val);
+  addr++;
+}
 
 int readEmLight(int address) 
 {
@@ -104,7 +116,7 @@ void saveVersion()
 
 void readAllEEPROM() 
 {
-  EEPROM.begin(max_addr);
+  EEPROM.begin(EEPROMMaxAddr);
   
   int addr = 0;
   byte ssid_addr = 0;
@@ -124,9 +136,7 @@ void readAllEEPROM()
     addr += 2;
   }
   
-  addr += 2;
-  addr += 2; 
-  addr++;
+  addr += 5;
   
   pSDA = EEPROM.read(addr);
   printToSerial(LOG_LEVEL_DEBUG, "pSDA Addr = %d", addr);
@@ -190,7 +200,7 @@ void readAllEEPROM()
   addr += 2; 
   printToSerial(LOG_LEVEL_DEBUG, "pwmFreq Addr = %d", addr);
   
-  Time_Zone = EEPROM.read(addr);
+  timeZone = EEPROM.read(addr);
   printToSerial(LOG_LEVEL_DEBUG, "TimeZone end Addr = %d", addr);
   
   printToSerial(LOG_LEVEL_DEBUG, "ds18x20 start Addr = %d", addr);
@@ -304,15 +314,14 @@ void readAllEEPROM()
     byte i = EEPROM.read(addr);
     if ((i > 32) and (i < 127)) 
     {
-      esp_hostname += char(i);
+      espHostname += char(i);
     }
   }
   addr++;
   
   //tAlarm removed
-  addr++;
-  addr++;
-  addr++;
+  addr += 3;
+
   
   isHidePassword = EEPROM.read(addr);
   printToSerial(LOG_LEVEL_DEBUG, "isHidePassword Addr = %d", addr);
@@ -336,7 +345,7 @@ void readAllEEPROM()
 void saveAllEEPROM() 
 {
   server.send(200, TEXT_PLAIN, "\n\r");//Why here?
-  EEPROM.begin(max_addr);
+  EEPROM.begin(EEPROMMaxAddr);
   
   int addr = 0;
   
@@ -349,9 +358,7 @@ void saveAllEEPROM()
     addr += 2;
   }
   
-  addr += 2;
-  addr += 2;
-  addr++;
+  addr += 5;
   
   EEPROM.write(addr, pSDA);
   addr++;
@@ -387,7 +394,7 @@ void saveAllEEPROM()
   EEPROM.write(addr + 1, b);
   addr += 2;
   
-  EEPROM.write(addr, Time_Zone);
+  EEPROM.write(addr, timeZone);
   
   sDS18x20(100);
   
@@ -448,22 +455,20 @@ void saveAllEEPROM()
     }
   }
 
-  if (esp_hostname.length() < 23)
+  if (espHostname.length() < 23)
   {
-    EEPROM.write(addr, esp_hostname.length());
+    EEPROM.write(addr, espHostname.length());
   }
   addr++;
   
-  for (byte j = 0; j < esp_hostname.length(); j++) 
+  for (byte j = 0; j < espHostname.length(); j++) 
   {
-    EEPROM.write(addr, esp_hostname[j]);
+    EEPROM.write(addr, espHostname[j]);
     addr++;
   }
   
   //tAlarm removed
-  addr++;
-  addr++;
-  addr++;
+  addr+=3;
   
   EEPROM.write(addr, isHidePassword);
   addr++;
@@ -477,9 +482,9 @@ void saveAllEEPROM()
 
 void clearEEPROM() 
 {
-  EEPROM.begin(max_addr);
+  EEPROM.begin(EEPROMMaxAddr);
   
-  for (int i = 0; i < max_addr; i++) 
+  for (int i = 0; i < EEPROMMaxAddr; i++) 
   {
     EEPROM.write(i, 0);
     yield();

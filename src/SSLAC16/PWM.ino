@@ -184,7 +184,7 @@ void setChannelPWM(byte _ch)
     return;
   }
   
-  if (EmLight == 1) 
+  if (isEmLightOn == 1) 
   {
     if (emLight[_ch] != -1) 
     {

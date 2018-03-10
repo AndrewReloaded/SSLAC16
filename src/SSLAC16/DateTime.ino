@@ -21,31 +21,31 @@ void setupDateTime()
 
 void setupTimeZone()
 {
-  configTime(Time_Zone * 3600, 0, "pool.ntp.org", "time.nist.gov");
+  configTime(timeZone * 3600, 0, "pool.ntp.org", "time.nist.gov");
 }
 
 void checkRTC() 
 {
-  isRTC = 0;
+  RTCType = 0;
   
   Wire.beginTransmission(PCF8563address);
   if (Wire.endTransmission() == 0)
   {
-    isRTC += 2;
+    RTCType += 2;
   }
   
   Wire.beginTransmission(DS1307address);
   if (Wire.endTransmission() == 0)
   {
-    isRTC += 1;
+    RTCType += 1;
   }
   
-  if (isRTC == 3) 
+  if (RTCType == 3) 
   {
-    isRTC = 2;
+    RTCType = 2;
   }
   
-  if (isRTC == 0) 
+  if (RTCType == 0) 
   {
     printToSerial(LOG_LEVEL_WARN, "RTC not found");
   }
@@ -53,11 +53,11 @@ void checkRTC()
 
 void getRTCDateTime()
 {
-  if (isRTC == 1) 
+  if (RTCType == 1) 
   {
     readDS1307(tm);
   }
-  else if (isRTC == 2) 
+  else if (RTCType == 2) 
   {
     readPCF8563(tm);
   }
@@ -65,11 +65,11 @@ void getRTCDateTime()
 
 void setRTCDateTime() 
 {  
-  if (isRTC == 1)
+  if (RTCType == 1)
   {
     setDS1307(tm);
   }
-  else if (isRTC == 2)
+  else if (RTCType == 2)
   {
     setPCF8563(tm);
   }
@@ -90,7 +90,7 @@ void syncDateTimeWithSntp()
     
     setRTCDateTime();
     
-    is_time_set = 1;
+    isTimeSet = 1;
 
     printToSerial(LOG_LEVEL_INFO, "Date and Time are synchronized with SNTP %d:%d:%d %d.%d.%d (timestamp = %d)", tm.Hour, tm.Minute, tm.Second, tm.Day, tm.Month, tm.Year, currentTimestamp);   
   }
@@ -216,7 +216,7 @@ void ticker()
 
   if (_millis % 1000 == 0) 
   {
-    if (isRTC == 0) 
+    if (RTCType == 0) 
     {
       tm.Hour = (msCurrent / 1000)  % 86400L / 3600;
       tm.Minute = (msCurrent / 1000) % 3600 / 60;
@@ -227,7 +227,7 @@ void ticker()
       getRTCDateTime();
     }
 
-    if ((is_time_set == 0) and (isConn))
+    if ((isTimeSet == 0) and (isConn))
     {
       syncDateTimeWithSntp();
     }

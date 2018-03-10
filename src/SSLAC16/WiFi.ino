@@ -64,12 +64,12 @@ void disconnectWiFi()
 
 void startSoftAP() 
 {
-  if (esp_hostname.length() == 0) 
+  if (espHostname.length() == 0) 
   {
-    esp_hostname = "SSLAC";
+    espHostname = "SSLAC";
   }
   
-  String SSID_AP = esp_hostname;
+  String SSID_AP = espHostname;
   SSID_AP += "_";
   String PASSWORD_AP;
   
@@ -86,7 +86,7 @@ void startSoftAP()
   
   if (isHidePassword == 1) 
   {
-    SSID_AP = esp_hostname;
+    SSID_AP = espHostname;
     if (isConn) 
     {
       PASSWORD_AP = password;

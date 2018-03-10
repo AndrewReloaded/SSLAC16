@@ -99,7 +99,7 @@ _ds18x20 Sensor[8];
 
 unsigned long _millis = 0;
 
-const int max_addr = 4096;
+const int EEPROMMaxAddr = 4096;
 
 byte playTime = 255;
 
@@ -109,9 +109,9 @@ bool isFirmware = false;
 bool isSPIFFS = false;
 File fsUploadFile;
 
-byte Current_ch = 0;
+byte CurrentCh = 0;
 int newCurrent[16];
-byte EmLight = 0;
+byte isEmLightOn = 0;
 int emLight[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 byte isPressed = 0;
 
@@ -133,14 +133,13 @@ byte buff[sizeof Sensor];
 byte foundedNet;
 String ssid ;
 String password ;
-String esp_hostname = "";
+String espHostname = "";
 byte isHidePassword = 0;
 bool isConn = false;
 
-//TODO: rename isRTC to RTCType
-byte isRTC = 0; // 0 - no RTC, 1 - DS1307, 2 - PCF8563
-byte Time_Zone = 3;
-byte is_time_set = 1;
+byte RTCType = 0; // 0 - no RTC, 1 - DS1307, 2 - PCF8563
+byte timeZone = 3;
+byte isTimeSet = 1;
 unsigned long msCurrent = 0;
 unsigned long msStart = 0;
 tmElements_t tm;
@@ -181,9 +180,9 @@ void setupWire()
 
 void loop(void) 
 {
-  if (Current_ch == 16)
+  if (CurrentCh == 16)
   { 
-    Current_ch = 0;
+    CurrentCh = 0;
   }
 
   delay(1);
@@ -199,11 +198,11 @@ void loop(void)
   if ((digitalRead(0) == 1) and (isPressed == 1)) 
   {
     isPressed = 0;
-    EmLight = EmLight == 0 ? 1 : 0;
+    isEmLightOn = isEmLightOn == 0 ? 1 : 0;
   }
 
-  setChannelPWM(Current_ch);
-  Current_ch++;
+  setChannelPWM(CurrentCh);
+  CurrentCh++;
 }
 
 

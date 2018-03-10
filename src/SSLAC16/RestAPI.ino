@@ -143,11 +143,11 @@ void _get()
                  "\"isMode\"", "\"isSetupCh\"", "\"channelGroup\"", "\"isAlone\"", \
                  "\"pwmFreq\"", "\"EmLight\"", "\"pSDA\"", "\"pSCL\"", "\"pOneWire\"", \
                  "\"isConn\"", "\"IP\"", "\"SSID\"", "\"isPCA\"", "\"isRCT\"", \
-                 "\"is_time_set\"", "\"hostname\"", "\"isMaster\"", "\"isSlave\"", "\"ID\"", "\"Sender_ID\"", \
+                 "\"isTimeSet\"", "\"hostname\"", "\"isMaster\"", "\"isSlave\"", "\"ID\"", "\"Sender_ID\"", \
                  0, 0, 0, 0, \
-                 pwmFreq, EmLight, pSDA, pSCL, pOneWire, \
-                 isConn, WiFi.localIP().toString().c_str(), ssid.c_str(), isPCA, isRTC, \
-                 is_time_set, esp_hostname.c_str(), 0, 0, ESP.getChipId(), 0, WiFi.softAPIP().toString().c_str(), \
+                 pwmFreq, isEmLightOn, pSDA, pSCL, pOneWire, \
+                 isConn, WiFi.localIP().toString().c_str(), ssid.c_str(), isPCA, RTCType, \
+                 isTimeSet, espHostname.c_str(), 0, 0, ESP.getChipId(), 0, WiFi.softAPIP().toString().c_str(), \
                  tm.Hour, tm.Minute, tm.Second, \
                  //Uptime days
                  _millis / 3600000 / 24, \
@@ -157,7 +157,7 @@ void _get()
                  _millis / 60000 % 60, \
                  //Uptime seconds
                  _millis / 1000 % 60, \
-                 Time_Zone, \
+                 timeZone, \
                  //TODO: remove tAlarm
                  "isAlarm", "tAlarm.index", "tAlarm.temp", "tAlarm.step", \
                  0, 0, 0, 0, isHidePassword);
@@ -178,7 +178,7 @@ void _get()
                  //Uptime minutes
                  _millis / 1000 % 60, \
                  //Uptime seconds
-                 Time_Zone, \
+                 timeZone, \
                  newCurrent[0], newCurrent[1], newCurrent[2], newCurrent[3], newCurrent[4], newCurrent[5], newCurrent[6], newCurrent[7], \
                  newCurrent[8], newCurrent[9], newCurrent[10], newCurrent[11], newCurrent[12], newCurrent[13], newCurrent[14], newCurrent[15]);
                  
@@ -193,9 +193,9 @@ void _get()
               [%d,%d,%d],\n\r\
               [\"%s\",\"%s\",\"%s\",\"%s\",%d,%d],\n\r\
               [%d]]\n\r", \
-                 tm.Hour, tm.Minute, tm.Second, Time_Zone, \
+                 tm.Hour, tm.Minute, tm.Second, timeZone, \
                  pSDA, pSCL, pwmFreq, \
-                 esp_hostname.c_str(), WiFi.localIP().toString().c_str(), ssid.c_str(), WiFi.softAPIP().toString().c_str(), foundedNet, isConn, cSensor);
+                 espHostname.c_str(), WiFi.localIP().toString().c_str(), ssid.c_str(), WiFi.softAPIP().toString().c_str(), foundedNet, isConn, cSensor);
                  
         server.send(200, TEXT_JSON, stream);
         return;
@@ -232,7 +232,7 @@ void _get()
                  _millis / 3600000 % 24, \
                  _millis / 60000 % 60, \
                  _millis / 1000 % 60, \
-                 Time_Zone);
+                 timeZone);
                  
         server.send(200, TEXT_JSON, stream);
         return;
@@ -362,8 +362,8 @@ void _set()
     
     if (server.argName(0) == "hostname") 
     {
-      esp_hostname = "";
-      esp_hostname = server.arg(0);
+      espHostname = "";
+      espHostname = server.arg(0);
     }
     
     if (server.argName(0) == "time") 
@@ -384,12 +384,12 @@ void _set()
         }
         else if (server.argName(i) == "tz") 
         {
-          Time_Zone = server.arg(i).toInt();
+          timeZone = server.arg(i).toInt();
         }
         
-        if (is_time_set == 0) 
+        if (isTimeSet == 0) 
         {
-          is_time_set = 1;
+          isTimeSet = 1;
         }
       }
       
@@ -435,7 +435,7 @@ void _set()
     
     if (server.argName(0) == "EmLight") 
     {
-      EmLight = server.arg(0).toInt();
+      isEmLightOn = server.arg(0).toInt();
       return;
     }
     
