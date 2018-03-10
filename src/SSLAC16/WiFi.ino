@@ -1,15 +1,22 @@
 
 void setupWiFi()
 {
-  //вместо скрытия пароля сделать отключение точки доступа
   if (digitalRead(0) == 0) 
   {
     isHidePassword = 0;
+    isSoftAPDisabled = 0;
   }
   
-  startSoftAP();
-  
-  WiFi.mode(WIFI_AP_STA);
+  if(isSoftAPDisabled == 1)
+  {
+    WiFi.mode(WIFI_STA);
+    printToSerial(LOG_LEVEL_INFO, "Soft AP disabled");
+  }
+  else
+  {
+    startSoftAP();
+    WiFi.mode(WIFI_AP_STA);
+  }
   
   connectWiFi();
 
@@ -18,9 +25,6 @@ void setupWiFi()
 
 void connectWiFi()
 {
-  //ssid = "home";
-  //password = "";
-
   if(ssid != "")
   {   
     WiFi.begin(ssid.c_str(), password.c_str());

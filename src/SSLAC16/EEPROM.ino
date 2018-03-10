@@ -309,9 +309,12 @@ void readAllEEPROM()
   addr++;
   
   //tAlarm removed
-  addr += 3;
+  addr += 2;
 
-  
+  isSoftAPDisabled = EEPROM.read(addr);
+  printToSerial(LOG_LEVEL_DEBUG, "isSoftAPDisable Addr = %d", addr);
+  addr++;
+
   isHidePassword = EEPROM.read(addr);
   printToSerial(LOG_LEVEL_DEBUG, "isHidePassword Addr = %d", addr);
   addr++;
@@ -409,10 +412,26 @@ void saveAllEEPROM()
   addr = 1024;
   for (byte i = 0; i < 16; i++) 
   {
-    EEPROM.write(addr, ch[i].Sunrise.Hour); addr++; EEPROM.write(addr, ch[i].Sunrise.Minute); addr++;
-    EEPROM.write(addr, ch[i].Day.Hour); addr++; EEPROM.write(addr, ch[i].Day.Minute); addr++;
-    EEPROM.write(addr, ch[i].Sunset.Hour); addr++; EEPROM.write(addr, ch[i].Sunset.Minute); addr++;
-    EEPROM.write(addr, ch[i].Night.Hour); addr++; EEPROM.write(addr, ch[i].Night.Minute); addr++;
+    EEPROM.write(addr, ch[i].Sunrise.Hour); 
+    addr++;   
+    EEPROM.write(addr, ch[i].Sunrise.Minute); 
+    addr++;
+    
+    EEPROM.write(addr, ch[i].Day.Hour); 
+    addr++;
+    EEPROM.write(addr, ch[i].Day.Minute); 
+    addr++;
+    
+    EEPROM.write(addr, ch[i].Sunset.Hour); 
+    addr++; 
+    EEPROM.write(addr, ch[i].Sunset.Minute); 
+    addr++;
+    
+    EEPROM.write(addr, ch[i].Night.Hour); 
+    addr++; 
+    EEPROM.write(addr, ch[i].Night.Minute); 
+    addr++;
+    
     yield();
   }
   addr++;
@@ -457,7 +476,10 @@ void saveAllEEPROM()
   }
   
   //tAlarm removed
-  addr+=3;
+  addr += 2;
+  
+  EEPROM.write(addr, isSoftAPDisabled);
+  addr++;
   
   EEPROM.write(addr, isHidePassword);
   addr++;

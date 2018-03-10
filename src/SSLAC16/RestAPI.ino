@@ -139,7 +139,7 @@ void _get()
                 [%d,%d,%d,%d],\n\r\
                 [%d],\n\r\
                 [\"%s\",\"%s\",\"%s\",\"%s\"],\n\r\
-                [%d,%d,%d,%d,%d]]\n\r",
+                [%d,%d,%d,%d,%d,%d]]\n\r",
                  "\"isMode\"", "\"isSetupCh\"", "\"channelGroup\"", "\"isAlone\"", \
                  "\"pwmFreq\"", "\"EmLight\"", "\"pSDA\"", "\"pSCL\"", "\"pOneWire\"", \
                  "\"isConn\"", "\"IP\"", "\"SSID\"", "\"isPCA\"", "\"isRCT\"", \
@@ -160,7 +160,7 @@ void _get()
                  timeZone, \
                  //TODO: remove tAlarm
                  "isAlarm", "tAlarm.index", "tAlarm.temp", "tAlarm.step", \
-                 0, 0, 0, 0, isHidePassword);
+                 0, 0, 0, 0, isHidePassword,isSoftAPDisabled);
                  
         server.send(200, TEXT_JSON, stream);
         return;
@@ -442,6 +442,12 @@ void _set()
     if (server.argName(0) == "isHidePassword") 
     {
       isHidePassword = server.arg(0).toInt();
+      return;
+    }
+
+    if (server.argName(0) == "isSoftAPDisabled") 
+    {
+      isSoftAPDisabled = server.arg(0).toInt();
       return;
     }
     

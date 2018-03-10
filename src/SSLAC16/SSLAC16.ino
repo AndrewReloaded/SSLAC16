@@ -133,6 +133,7 @@ String ssid ;
 String password ;
 String espHostname = "";
 byte isHidePassword = 0;
+byte isSoftAPDisabled = 0;
 bool isConn = false;
 
 byte RTCType = 0; // 0 - no RTC, 1 - DS1307, 2 - PCF8563
