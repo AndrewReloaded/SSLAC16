@@ -70,10 +70,14 @@
                         </caption>
                         <tbody>
                             <tr>
-                                <td>Hostname
-                                    <br>IP address: </td>
+                                <td>Hostname</td>
                                 <td>
                                     <div id=hostname></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>AP IP address: </td>
+                                <td>
                                     <div id=ipaddr></div>
                                 </td>
                             </tr>
@@ -85,7 +89,13 @@
                                             <button id=discon onclick=disconnect()>Disconnect </td>
                             </tr>
                             <tr>
-                                <td>network list </td>
+                                <td>WiFi IP address: </td>
+                                <td>
+                                    <div id=wifiipaddr></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Network list </td>
                                 <td>
                                     <select id=wifi></select>
                                     <td>
@@ -95,6 +105,13 @@
                                     <td>
                                         <input id=isHidePassword onchange=_isHidePassword() type=checkbox>
                                     </td>
+                            <tr>
+                                <td style=width:100%>Disable AP
+                                    <td>
+                                        <input id=isSoftAPDisabled onchange=_isSoftAPDisabled() type=checkbox>
+                                    </td>
+                            <tr>
+                                <td style=width:100% colspan=3>You can enable AP and/or show  password by booting SSLAC with "Flash"/"Emergency light" button pressed
                         </tbody>
                     </table>
                     <td>
@@ -242,10 +259,12 @@
         document.getElementById("pwmFreq").value = info1[1][2];
         if (info1[2][5] == 0) {
             document.getElementById("ipaddr").innerHTML = info1[2][3];
+            document.getElementById("wifiipaddr").innerHTML = info1[2][1];
             document.getElementById("ssid").innerHTML = "Not connected";
             document.getElementById("discon").disabled = true
         } else {
             document.getElementById("ipaddr").innerHTML = info1[2][3];
+            document.getElementById("wifiipaddr").innerHTML = info1[2][1];
             document.getElementById("ssid").innerHTML = info1[2][2];
             document.getElementById("discon").disabled = false
         }
@@ -273,6 +292,9 @@
         }
         if (info[6][4] == 1) {
             document.getElementById("isHidePassword").checked = true
+        }
+        if (info[6][5] == 1) {
+            document.getElementById("isSoftAPDisabled").checked = true
         }
     }
     getInfo1();
@@ -355,12 +377,23 @@
 
     function _isHidePassword() {
         if (document.getElementById("isHidePassword").checked) {
-            alert("Dont froget you default password !!!");
+            alert("Dont forget you default password !!!");
             set_rest("isHidePassword=1", _ip);
             info[6][4] = 1
         } else {
             set_rest("isHidePassword=0", _ip);
             info[6][4] = 0
+        }
+    }
+  
+    function _isSoftAPDisabled() {
+        if (document.getElementById("isSoftAPDisabled").checked) {
+            alert("Dont forget to connect SSLAC to your WiFi network !!!");
+            set_rest("isSoftAPDisabled=1", _ip);
+            info[6][5] = 1
+        } else {
+            set_rest("isSoftAPDisabled=0", _ip);
+            info[6][5] = 0
         }
     }
 
